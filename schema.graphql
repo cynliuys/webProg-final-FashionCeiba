@@ -1,0 +1,86 @@
+scalar Upload
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+
+type Query {
+    getPDFs: [File]
+    getUSERs: [User!]!
+    isLogin: User
+    getTeacherPic: [Picture]
+
+}
+
+type Mutation {
+    singleUploadPDF (data: Upload!): File!
+    createUser(data: CreateUserInput!): User!
+    loginUser(data: LoginUserInput!): User!
+    signoutUser: Boolean!
+    teacherPic(data: PicInput!): Picture!
+}
+
+type Subscription {
+  PDF: PDFSubscriptionPayload!
+  login: LoginSubscriptionPayload!
+  PIC: PICSubscriptionPayload!
+}
+
+
+type PDFSubscriptionPayload {
+  mutation: MutationType!
+  data: File!
+}
+
+type LoginSubscriptionPayload {
+  mutation: MutationType!
+  data: User
+}
+
+type PICSubscriptionPayload {
+  mutation: MutationType!
+  data: Picture!
+}
+
+type File {
+    id: ID!
+    filename: String!
+    mimetype: String!
+    encoding: String
+    path: String
+    pdf: String
+}
+
+
+type Picture {
+  id: ID!
+  pic: String!
+  filename: String!
+  page: String!
+}
+
+type User {
+  id: ID!
+  pwd: String!
+  name: String!
+  email: String!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  pwd: String!
+}
+
+input LoginUserInput {
+  email: String!
+  pwd: String!
+}
+
+input PicInput{
+    pic: String!
+    filename: String!
+    page: String! 
+}
