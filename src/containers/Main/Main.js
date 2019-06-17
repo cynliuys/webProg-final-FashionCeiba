@@ -34,7 +34,7 @@ class Main extends React.Component {
       skechW: null,
       skechWH: null,
     }
-    this.flushSketch = false;
+    this.clearSketch = false;
   }
    
   keyFunction = e => {
@@ -82,7 +82,8 @@ class Main extends React.Component {
   }
 
   goToPrevPage = () => {
-    this.flushSketch = true;
+    this.clearSketch = true;
+    console.log("now true");
     document.activeElement.blur()
     if (this.state.currentPages === 0)
       return
@@ -99,7 +100,8 @@ class Main extends React.Component {
   }
 
   goToNextPage = () => {
-    this.flushSketch = true;
+    this.clearSketch = true;
+    console.log("now true");
     document.activeElement.blur()
     if (this.state.currentPages === 0)
       return
@@ -249,7 +251,7 @@ class Main extends React.Component {
                 loading={null}
               >
                 <Page onLoadSuccess={this.onLoadSuccess} pageNumber={this.state.pageNumber} height={this.state.height} />
-                <Sketch height={this.state.skechH} width={this.state.skechW} flushSketch={this.flushSketch}
+                <Sketch height={this.state.skechH} width={this.state.skechW} clear={this.clearSketch}
                         fileName={this.state.fileName} page={this.state.pageNumber} />
               </Document>
               {this.state.currentfile?<div className="Foot">
@@ -261,7 +263,9 @@ class Main extends React.Component {
                 </h2>
                 <button className="PageButton" onClick={this.goToNextPage} onKeyPress={this.goToNextPage}>{`>`}</button>
               </div>:null}
-              {this.flushSketch = false}
+              {this.clearSketch = false}
+              {console.log("now false")}
+
             </div>
           </div>
         </div>

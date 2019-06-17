@@ -289,249 +289,243 @@ class Sketch extends React.Component {
     
 
     render = () => {
-        console.log("Render");
+        if(this.props.clear){
+            this._clear();
+        }
         let { controlledValue } = this.state;
         return (
             <div className="overlay">
                 <MuiThemeProvider muiTheme={getMuiTheme()}>
-                    
+                    <div className='row'>
+                        
+                        {/* Sketch area */}
+                        <div className='col-xs-7 col-sm-7 col-md-9 col-lg-9'>
+                            <Mutation  mutation={TEACHER_PIC_MUTATION}>
+                                {teacherPic => {
+                                    this.teacherPic = teacherPic;
+                                    return ( 
+                                    <SketchField
+                                        name='sketch'
+                                        className='sketchfield'
+                                        ref={(c) => this._sketch = c}
+                                        lineColor={this.state.lineColor}
+                                        lineWidth={this.state.lineWidth}
+                                        fillColor={this.state.fillWithColor ? this.state.fillColor : 'transparent'}
+                                        backgroundColor={this.state.fillWithBackgroundColor ? this.state.backgroundColor : 'transparent'}
+                                        width={this.props.width }
+                                        height={this.props.height }
+                                        defaultValue={this.props.sketch}
+                                        value={controlledValue}
+                                        forceValue={true}
+                                        onMouseUp={this._onSketchChange}
+                                        tool={this.state.tool}
+                                    />
+                                )}}
+                            </Mutation>
 
-                        {/*Sketch Area with tools*/}
-
-                        <div className='row'>
-                    
-                            <div className='col-xs-7 col-sm-7 col-md-9 col-lg-9'>
-
-                                {/* Sketch area */}
-                                 <Mutation  mutation={TEACHER_PIC_MUTATION}>
-                                    {teacherPic => {
-                                        this.teacherPic = teacherPic;
-                                        return ( 
-                                        <SketchField
-                                            name='sketch'
-                                            className='sketchfield'
-                                            ref={(c) => this._sketch = c}
-                                            lineColor={this.state.lineColor}
-                                            lineWidth={this.state.lineWidth}
-                                            fillColor={this.state.fillWithColor ? this.state.fillColor : 'transparent'}
-                                            backgroundColor={this.state.fillWithBackgroundColor ? this.state.backgroundColor : 'transparent'}
-                                            width={this.props.width }
-                                            height={this.props.height }
-                                            defaultValue={this.props.sketch}
-                                            value={controlledValue}
-                                            forceValue={true}
-                                            onMouseUp={this._onSketchChange}
-                                            tool={this.state.tool}
-                                        />
-                                    )}}
-                                </Mutation>
-
-                                <Query query={TEACHER_PIC_QUERY}>
-                                    {({loading, error, data, subscribeToMore}) => {
-                                        if (loading) return <p>Loading...</p>
-                                        if (error) return <p>Error...</p>
-                                        if (!unsubscribe)
-                                            unsubscribe = subscribeToMore({
-                                                document: TEACHER_PIC_SUBSCRIPTION,
-                                                updateQuery: (prev, { subscriptionData }) => {
-                                                    if (!subscriptionData.data) return prev;
-                                                    console.log("updateQuery : ",subscriptionData.data);
-                                                    const newData = subscriptionData.data.PIC.data;
-                                                    if(subscriptionData.data.PIC.mutation === "CREATED"){
-                                                        return {
-                                                            ...prev,
-                                                            getTeacherPic: [newData, ...prev.getTeacherPic]
-                                                        }
-                                                    }
-                                                    else if(subscriptionData.data.PIC.mutation === "UPDATED"){
-                                                        let a = prev.getTeacherPic.map((prevData)=>{
-                                                            if(prevData.filename===newData.filename &&
-                                                                prevData.page===newData.page){
-                                                                    return newData;
-                                                            }
-                                                            else{
-                                                                return prevData;
-                                                            }
-                                                        });
-                                                        return{
-                                                            ...prev,
-                                                            getTeacherPic: a
-                                                        }
-                                                    }
+                            <Query query={TEACHER_PIC_QUERY}>
+                                {({loading, error, data, subscribeToMore}) => {
+                                    if (loading) return <p>Loading...</p>
+                                    if (error) return <p>Error...</p>
+                                    if (!unsubscribe) unsubscribe = subscribeToMore({
+                                        document: TEACHER_PIC_SUBSCRIPTION,
+                                        updateQuery: (prev, { subscriptionData }) => {
+                                            if (!subscriptionData.data) return prev;
+                                            console.log("updateQuery : ",subscriptionData.data);
+                                            const newData = subscriptionData.data.PIC.data;
+                                            if(subscriptionData.data.PIC.mutation === "CREATED"){
+                                                return {
+                                                    ...prev,
+                                                    getTeacherPic: [newData, ...prev.getTeacherPic]
                                                 }
-                                            }) 
-
-                                        // console.log("_clear !");
-                                        // console.log(Object.keys(data).length);
-                                        // console.log(data);
-                                        if(Object.keys(data).length ===  0){
-                                            return null; 
-                                        }
-                                        if(data.getTeacherPic.length ===  0){
-                                            return null; 
-                                        }
-                                        console.log("Query !");
-                                        data.getTeacherPic.map((picture) =>{
-                                            if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
-                                                this._sketch.addImg(picture.pic);
                                             }
-                                        });
-                                        return null;
-                                    }}
-                                </Query>
+                                            else if(subscriptionData.data.PIC.mutation === "UPDATED"){
+                                                let a = prev.getTeacherPic.map((prevData)=>{
+                                                    if(prevData.filename===newData.filename &&
+                                                        prevData.page===newData.page){
+                                                            return newData;
+                                                    }
+                                                    else{
+                                                        return prevData;
+                                                    }
+                                                });
+                                                return{
+                                                    ...prev,
+                                                    getTeacherPic: a
+                                                }
+                                            }
+                                        }
+                                    }) 
 
-                            </div>
-                            <div className='col-xs-5 col-sm-5 col-md-3 col-lg-3 sidebar'>
-                                <Card style={{ margin: '10px 10px 5px 0' }} classes={{root: 'card'}}>
-                                    <CardHeader title='Tools' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                    <CardText expandable={true}>
-                                        <label htmlFor='tool'>Canvas Tool</label><br />
-                                        <SelectField ref='tool' value={this.state.tool} onChange={this._selectTool}>
-                                            <MenuItem value={Tools.Select} primaryText="Select" />
-                                            <MenuItem value={Tools.Pencil} primaryText="Pencil" />
-                                            <MenuItem value={Tools.Line} primaryText="Line" />
-                                            <MenuItem value={Tools.Rectangle} primaryText="Rectangle" />
-                                            <MenuItem value={Tools.Circle} primaryText="Circle" />
-                                            <MenuItem value={Tools.Pan} primaryText="Pan" />
-                                        </SelectField>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <label htmlFor='slider'>Line Weight</label>
-                                        <Slider ref='slider' step={0.1}
-                                            defaultValue={this.state.lineWidth / 100}
-                                            onChange={(e, v) => this.setState({ lineWidth: v * 100 })} />
-                                        <br />
-                                        <label htmlFor='zoom'>Zoom</label>
-                                        <div>
-                                            <IconButton
-                                                ref='zoom'
-                                                onClick={(e) => this._sketch.zoom(1.25)}>
-                                                <ZoomInIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                ref='zoom1'
-                                                onClick={(e) => this._sketch.zoom(0.8)}>
-                                                <ZoomOutIcon />
-                                            </IconButton>
-                                            <br />
-                                            <br />
-                                            <Toggle label="Control size"
-                                                defaultToggled={this.state.controlledSize}
-                                                onToggle={(e) => this.setState({ controlledSize: !this.state.controlledSize })} />
-                                            <br />
-                                            <label htmlFor='xSize'>Change Canvas Width</label>
-                                            <Slider ref='xSize' step={1}
-                                                min={10} max={1000}
-                                                defaultValue={this.state.sketchWidth}
-                                                onChange={(e, v) => this.setState({ sketchWidth: v })} />
-                                            <br />
-                                            <label htmlFor='ySize'>Change Canvas Height</label>
-                                            <Slider ref='ySize' step={1}
-                                                min={10} max={1000}
-                                                defaultValue={this.state.sketchHeight}
-                                                onChange={(e, v) => this.setState({ sketchHeight: v })} />
-                                            <br />
-                                        </div>
-                                    </CardText>
-                                </Card>
-                                <Card style={{ margin: '5px 10px 5px 0' }}>
-                                    <CardHeader title='Colors' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                    <CardText expandable={true}>
-                                        <label htmlFor='lineColor'>Line</label>
-                                        <CompactPicker
-                                            id='lineColor' color={this.state.lineColor}
-                                            onChange={(color) => this.setState({ lineColor: color.hex })} />
-                                        <br />
-                                        <br />
-                                        <Toggle label="Fill"
-                                            defaultToggled={this.state.fillWithColor}
-                                            onToggle={(e) => this.setState({ fillWithColor: !this.state.fillWithColor })} />
-                                        <CompactPicker
-                                            color={this.state.fillColor}
-                                            onChange={(color) => this.setState({ fillColor: color.hex })} />
-                                    </CardText>
-                                </Card>
-                                <Card style={{ margin: '5px 10px 5px 0' }}>
-                                    <CardHeader title='Background' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                    <CardText expandable={true}>
-                                        <Toggle label="Background Color"
-                                            defaultToggled={this.state.fillWithBackgroundColor}
-                                            onToggle={(e) => this.setState({ fillWithBackgroundColor: !this.state.fillWithBackgroundColor })} />
-                                        <CompactPicker
-                                            color={this.state.backgroundColor}
-                                            onChange={(color) => this.setState({ backgroundColor: color.hex })} />
+                                    if(Object.keys(data).length ===  0){
+                                        return null; 
+                                    }
+                                    if(data.getTeacherPic.length ===  0){
+                                        return null; 
+                                    }
+                                    console.log("Query !");
+                                    data.getTeacherPic.map((picture) =>{
+                                        if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
+                                            this._sketch.addImg(picture.pic);
+                                        }
+                                    });
+                                    return null;
+                                }}
+                            </Query>
 
-                                        <br />
-                                        <br />
-                                        {/*
-                                        <label htmlFor='lineColor'>Set Image Background</label>
-                                        <br />
-
-                                        <Toggle label="Fit canvas (X,Y)"
-                                            defaultToggled={this.state.stretched}
-                                            onToggle={(e) => this.setState({ stretched: !this.state.stretched })} />
-
-                                        <Toggle label="Fit canvas (X)"
-                                            defaultToggled={this.state.stretchedX}
-                                            onToggle={(e) => this.setState({ stretchedX: !this.state.stretchedX })} />
-
-                                        <Toggle label="Fit canvas (Y)"
-                                            defaultToggled={this.state.stretchedY}
-                                            onToggle={(e) => this.setState({ stretchedY: !this.state.stretchedY })} />
-
-                                        <div>
-                                            <DropZone
-                                                ref="dropzone"
-                                                accept='image/*'
-                                                multiple={false}
-                                                style={styles.dropArea}
-                                                activeStyle={styles.activeStyle}
-                                                rejectStyle={styles.rejectStyle}
-                                                onDrop={this._onBackgroundImageDrop}>
-                                                Try dropping an image here,<br />
-                                                or click<br />
-                                                to select image as background.
-                                            </DropZone>
-                                        </div>
-                                        */}
-                                    </CardText>
-                                </Card>
-                                <Card style={{ margin: '5px 10px 5px 0' }}>
-                                    <CardHeader title='Images' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                    <CardText expandable={true}>
-
-                                        <div>
-                                            <TextField
-                                                floatingLabelText='Image URL'
-                                                hintText='Copy/Paste an image URL'
-                                                ref={(c) => {this._imageUrlTxt = c}}                                                defaultValue='https://files.gamebanana.com/img/ico/sprays/4ea2f4dad8d6f.png' />
-
-                                            <br />
-
-                                            <RaisedButton
-                                                label='Load Image from URL'
-                                                onClick={(e) => {
-                                                    this._sketch.addImg(this._imageUrlTxt.getValue());
-                                                }} />
-                                        </div>
-
-                                        <br />
-
-                                        <br />
-
-                                        <div>
-                                            <RaisedButton
-                                                label='Load Image from Data URL'
-                                                onClick={(e) => this._sketch.addImg(dataUrl)} />
-                                        </div>
-
-                                    </CardText>
-                                </Card>
-
-                                
-                            </div>
                         </div>
+                        {/* Tool Box */}
+                        <div className='col-xs-5 col-sm-5 col-md-3 col-lg-3 sidebar'>
+                            <Card style={{ margin: '10px 10px 5px 0' }} classes={{root: 'card'}}>
+                                <CardHeader title='Tools' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
+                                <CardText expandable={true}>
+                                    <label htmlFor='tool'>Canvas Tool</label><br />
+                                    <SelectField ref='tool' value={this.state.tool} onChange={this._selectTool}>
+                                        <MenuItem value={Tools.Select} primaryText="Select" />
+                                        <MenuItem value={Tools.Pencil} primaryText="Pencil" />
+                                        <MenuItem value={Tools.Line} primaryText="Line" />
+                                        <MenuItem value={Tools.Rectangle} primaryText="Rectangle" />
+                                        <MenuItem value={Tools.Circle} primaryText="Circle" />
+                                        <MenuItem value={Tools.Pan} primaryText="Pan" />
+                                    </SelectField>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <label htmlFor='slider'>Line Weight</label>
+                                    <Slider ref='slider' step={0.1}
+                                        defaultValue={this.state.lineWidth / 100}
+                                        onChange={(e, v) => this.setState({ lineWidth: v * 100 })} />
+                                    <br />
+                                    <label htmlFor='zoom'>Zoom</label>
+                                    <div>
+                                        <IconButton
+                                            ref='zoom'
+                                            onClick={(e) => this._sketch.zoom(1.25)}>
+                                            <ZoomInIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            ref='zoom1'
+                                            onClick={(e) => this._sketch.zoom(0.8)}>
+                                            <ZoomOutIcon />
+                                        </IconButton>
+                                        <br />
+                                        <br />
+                                        <Toggle label="Control size"
+                                            defaultToggled={this.state.controlledSize}
+                                            onToggle={(e) => this.setState({ controlledSize: !this.state.controlledSize })} />
+                                        <br />
+                                        <label htmlFor='xSize'>Change Canvas Width</label>
+                                        <Slider ref='xSize' step={1}
+                                            min={10} max={1000}
+                                            defaultValue={this.state.sketchWidth}
+                                            onChange={(e, v) => this.setState({ sketchWidth: v })} />
+                                        <br />
+                                        <label htmlFor='ySize'>Change Canvas Height</label>
+                                        <Slider ref='ySize' step={1}
+                                            min={10} max={1000}
+                                            defaultValue={this.state.sketchHeight}
+                                            onChange={(e, v) => this.setState({ sketchHeight: v })} />
+                                        <br />
+                                    </div>
+                                </CardText>
+                            </Card>
+                            <Card style={{ margin: '5px 10px 5px 0' }}>
+                                <CardHeader title='Colors' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
+                                <CardText expandable={true}>
+                                    <label htmlFor='lineColor'>Line</label>
+                                    <CompactPicker
+                                        id='lineColor' color={this.state.lineColor}
+                                        onChange={(color) => this.setState({ lineColor: color.hex })} />
+                                    <br />
+                                    <br />
+                                    <Toggle label="Fill"
+                                        defaultToggled={this.state.fillWithColor}
+                                        onToggle={(e) => this.setState({ fillWithColor: !this.state.fillWithColor })} />
+                                    <CompactPicker
+                                        color={this.state.fillColor}
+                                        onChange={(color) => this.setState({ fillColor: color.hex })} />
+                                </CardText>
+                            </Card>
+                            <Card style={{ margin: '5px 10px 5px 0' }}>
+                                <CardHeader title='Background' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
+                                <CardText expandable={true}>
+                                    <Toggle label="Background Color"
+                                        defaultToggled={this.state.fillWithBackgroundColor}
+                                        onToggle={(e) => this.setState({ fillWithBackgroundColor: !this.state.fillWithBackgroundColor })} />
+                                    <CompactPicker
+                                        color={this.state.backgroundColor}
+                                        onChange={(color) => this.setState({ backgroundColor: color.hex })} />
+
+                                    <br />
+                                    <br />
+                                    {/*
+                                    <label htmlFor='lineColor'>Set Image Background</label>
+                                    <br />
+
+                                    <Toggle label="Fit canvas (X,Y)"
+                                        defaultToggled={this.state.stretched}
+                                        onToggle={(e) => this.setState({ stretched: !this.state.stretched })} />
+
+                                    <Toggle label="Fit canvas (X)"
+                                        defaultToggled={this.state.stretchedX}
+                                        onToggle={(e) => this.setState({ stretchedX: !this.state.stretchedX })} />
+
+                                    <Toggle label="Fit canvas (Y)"
+                                        defaultToggled={this.state.stretchedY}
+                                        onToggle={(e) => this.setState({ stretchedY: !this.state.stretchedY })} />
+
+                                    <div>
+                                        <DropZone
+                                            ref="dropzone"
+                                            accept='image/*'
+                                            multiple={false}
+                                            style={styles.dropArea}
+                                            activeStyle={styles.activeStyle}
+                                            rejectStyle={styles.rejectStyle}
+                                            onDrop={this._onBackgroundImageDrop}>
+                                            Try dropping an image here,<br />
+                                            or click<br />
+                                            to select image as background.
+                                        </DropZone>
+                                    </div>
+                                    */}
+                                </CardText>
+                            </Card>
+                            <Card style={{ margin: '5px 10px 5px 0' }}>
+                                <CardHeader title='Images' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
+                                <CardText expandable={true}>
+
+                                    <div>
+                                        <TextField
+                                            floatingLabelText='Image URL'
+                                            hintText='Copy/Paste an image URL'
+                                            ref={(c) => {this._imageUrlTxt = c}}                                                defaultValue='https://files.gamebanana.com/img/ico/sprays/4ea2f4dad8d6f.png' />
+
+                                        <br />
+
+                                        <RaisedButton
+                                            label='Load Image from URL'
+                                            onClick={(e) => {
+                                                this._sketch.addImg(this._imageUrlTxt.getValue());
+                                            }} />
+                                    </div>
+
+                                    <br />
+
+                                    <br />
+
+                                    <div>
+                                        <RaisedButton
+                                            label='Load Image from Data URL'
+                                            onClick={(e) => this._sketch.addImg(dataUrl)} />
+                                    </div>
+
+                                </CardText>
+                            </Card>
+
+                            
+                        </div>
+                    </div>
 
                 </MuiThemeProvider>
             </div>
