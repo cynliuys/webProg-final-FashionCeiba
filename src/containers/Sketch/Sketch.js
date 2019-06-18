@@ -314,6 +314,8 @@ class Sketch extends React.Component {
                                         backgroundColor={this.state.fillWithBackgroundColor ? this.state.backgroundColor : 'transparent'}
                                         width={this.props.width }
                                         height={this.props.height }
+                                        // width='1024px' 
+                                        // height='768px'
                                         defaultValue={this.props.sketch}
                                         value={controlledValue}
                                         forceValue={true}
@@ -364,12 +366,17 @@ class Sketch extends React.Component {
                                         return null; 
                                     }
                                     console.log("Query !");
+                                    console.log(data.getTeacherPic)
                                     data.getTeacherPic.map((picture) =>{
                                         if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
-                                            this._sketch.addImg(picture.pic);
+                                            // this._sketch.addImg(picture.pic);
+                                            this._sketch.setBackgroundFromDataUrl(picture.pic, {
+                                                stretched: true,
+                                            })
                                         }
                                     });
                                     return null;
+          
                                 }}
                             </Query>
 

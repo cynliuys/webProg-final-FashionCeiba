@@ -1,0 +1,27 @@
+.Button {
+    padding: 5px 15px;
+    font-size: 10px;
+    border-radius: 4px;
+    border: 1px inset rgba(0, 0, 0, 0.3);
+    background-color: #3d99ce;
+    color: white;
+    text-align: right;
+    cursor: pointer;
+    transition: background-color 180ms ease-in;
+    display: flex;
+}
+
+
+.Button:hover {
+    background-color: #2b6a8f;
+}
+
+.Button--is-primary {
+border: none;
+font-size: 16px;
+padding: 10px 10px;
+}
+
+.Button--is-active {
+background-color: #2b6a8f;
+}

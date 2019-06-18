@@ -1,9 +1,9 @@
 const Query = {
     getPDFs: async (parent, args, { db, req, models, GridFS, utils: {getFile} } , info) => {
-        const file_infos = await models.Uploadmore.find({});
+        const file_infos = await models.Uploadpdf.find({});
         const files = []
         for (var i = 0; i < file_infos.length; i++){
-            const id = file_infos[i].id
+            const id = file_infos[i]._id
             const file_string = await getFile(GridFS,id);
             const output_file = {
                 id:file_infos[i].id, 

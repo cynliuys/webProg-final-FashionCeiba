@@ -3,7 +3,7 @@ import moongoose from 'mongoose';
 const Schema = moongoose.Schema;
 
 const uploadSchema =  new Schema({
-    id:{
+    _id:{
         type:String,
         required:[true,"The id is required"]
     },
@@ -18,9 +18,6 @@ const uploadSchema =  new Schema({
     encoding: {
         type: String,
     },
-    path : {
-        type: String,
-    }
 });
 
-export default moongoose.model('uploads', uploadSchema);
+export default moongoose.model('pdfs', uploadSchema);

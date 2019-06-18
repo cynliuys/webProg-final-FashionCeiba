@@ -16,6 +16,7 @@ type Query {
 
 type Mutation {
     singleUploadPDF (data: Upload!): File!
+    deletePDF(data: DeletePDFInput!):File!
     createUser(data: CreateUserInput!): User!
     loginUser(data: LoginUserInput!): User!
     signoutUser: Boolean!
@@ -24,7 +25,6 @@ type Mutation {
 
 type Subscription {
   PDF: PDFSubscriptionPayload!
-  login: LoginSubscriptionPayload!
   PIC: PICSubscriptionPayload!
 }
 
@@ -34,10 +34,6 @@ type PDFSubscriptionPayload {
   data: File!
 }
 
-type LoginSubscriptionPayload {
-  mutation: MutationType!
-  data: User
-}
 
 type PICSubscriptionPayload {
   mutation: MutationType!
@@ -77,6 +73,11 @@ input CreateUserInput {
 input LoginUserInput {
   email: String!
   pwd: String!
+}
+
+input DeletePDFInput {
+    id: ID!
+    filename: String!
 }
 
 input PicInput{

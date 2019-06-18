@@ -58,6 +58,23 @@ export const SIGNOUT_USER_MUTATION = gql`
   }
 `
 
+export const DELETE_PDF_MUTATION = gql`
+  mutation deletePDF (
+      $id: ID!
+      $filename: String!
+  ){
+    deletePDF(
+        data: {
+          id: $id
+          filename: $filename
+    })
+    {
+      id
+      filename
+    }
+  } 
+`
+
 export const TEACHER_PIC_MUTATION = gql`
   mutation teacherPic (
       $pic: String!

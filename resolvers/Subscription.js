@@ -5,17 +5,11 @@ const Subscription = {
         }
     },
 
-    login: {
-        subscribe: async(parent, args, { pubsub }, info) => {
-          return pubsub.asyncIterator('login')
-        }
-    },
-
     PIC: {
       subscribe: async(parent, args, { pubsub }, info) => {
         return pubsub.asyncIterator('PIC')
       }
-  },
+    },
 
 }
 

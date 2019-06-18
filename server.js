@@ -6,7 +6,7 @@ import { startDB, models } from './db';
 import Query from './resolvers/Query';
 import Mutation from './resolvers/Mutation';
 import Subscription from './resolvers/Subscription';
-import { getFile,  uploadFile } from './utils/upload';
+import { getFile,  uploadFile, deleteFile } from './utils/upload';
 import session from 'express-session';
 import ms from 'ms';
 
@@ -21,14 +21,15 @@ mongoose.set('useFindAndModify', false);
 
 mongoose.connection.once("open", () => {
   
-const GridFS = new GridFSBucket(mongoose.connection.db, {bucketName: 'uploadPDFs',chunkSizeBytes: 255 * 1024 });
+const GridFS = new GridFSBucket(mongoose.connection.db, {bucketName: 'pdfs',chunkSizeBytes: 255 * 1024 });
 const context = (req) => ({
     req: req.request,
     db,
     models,
     utils: {
       getFile,
-      uploadFile
+      uploadFile,
+      deleteFile
     },
     GridFS,
     pubsub

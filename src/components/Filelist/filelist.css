@@ -1,0 +1,60 @@
+.FileList {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+}
+
+.FileList__item {
+display: -ms-flexbox;
+display: flex;
+-ms-flex-align: center;
+align-items: center;
+padding: 0 1.5em;
+transition: background 180ms ease-in;
+cursor: pointer;
+width: 100%;
+}
+
+.FileList__item:hover {
+background: #dedede;
+}
+
+.FileList__item figure {
+margin: 0;
+margin-right: 1em;
+}
+
+.FileList__item small {
+display: block;
+color: #aaa;
+}
+
+.FileList__item h3 {
+text-align: left;
+text-overflow: ellipsis;
+overflow: hidden;
+}
+
+.FileList__text{
+width: 87%
+}
+
+.FileList__X {
+display: none;
+}
+
+.FileList__item:hover .FileList__X {
+display: inline;
+position: relative;
+max-width: 25px;
+max-height: 25px;
+left:5%;
+opacity: 0.5;
+}
+
+.FileList__item:hover .FileList__X:hover {
+opacity: 1;
+cursor: pointer;
+}

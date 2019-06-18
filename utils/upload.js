@@ -1,44 +1,12 @@
-import { createWriteStream, unlinkSync } from 'fs'
-import uuidv4 from 'uuid/v4'
-import uploads from '../db/upload'
-import { resolve } from 'path'
-
+const streamToPromise = require('./stream-to-promise');
 const pump = require('pump-promise');
 
-const uploadDir = resolve(__dirname, '../public')
 
-const storeDB = async(file) => {
-    const { id, filename, mimetype, path } = file;
-    try {
-        let file = new uploads({id, filename, mimetype, path });
-        return await file.save();
-    } catch (err) {
-        return err
-    }
+export const deleteFile = async (bucket, id) => {
+    const gridFSStream = bucket.delete(id);
+    await streamToPromise(gridFSStream);
+    return Promise.resolve('Delete Sucess!');
 }
-
-const storeFS = ({ stream, filename }) => {
-    const id = uuidv4()
-    const path = `${uploadDir}/${id}-${filename}`
-    return new Promise((resolve, reject) =>
-        stream.on('error', error => {
-            if (stream.truncated) unlinkSync(path)
-            reject(error)
-        })
-        .pipe(createWriteStream(path))
-        .on('error', error => reject(error))
-        .on('finish', () => resolve({ id, path}))
-    )
-}
-
-export const processUpload = async upload => {
-    const { createReadStream, filename, mimetype, encoding } = await upload
-    const stream = createReadStream()
-    const { id, path} = await storeFS({ stream, filename })
-    return storeDB({ id, filename, mimetype, path })
-}
-
-
 
 export const uploadFile = async (bucket, stream, options) => {
 

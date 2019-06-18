@@ -1,15 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button } from './button'
+import { Button } from '../Button/button'
+import './inputfile.css'
 
 export default class InputFile extends React.Component {
     triggerInput = e => {
         ReactDOM.findDOMNode(this._inputFile).click();
     }
     render() {
+        var visibilityState = this.props.user.email==='ADMIN';
         return (
             <div className="InputFile">
-              <Button onClick={this.triggerInput} type="primary">
+              {visibilityState? null:<h3 className="name">Hi! {this.props.user.name}</h3>}
+              <Button onClick={this.triggerInput} type="primary" visible={visibilityState}>
                   <input 
                       name="file" 
                       type="file" 
@@ -19,7 +22,7 @@ export default class InputFile extends React.Component {
                       onChange={this.props.uploadFileHandler}
                   />
                   <label htmlFor="file" className="InputFile__label">{this.props.children}</label>
-              </Button>
+              </Button> 
             </div>
         )
     }

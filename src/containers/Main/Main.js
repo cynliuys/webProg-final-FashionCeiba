@@ -1,8 +1,8 @@
 import React from 'react';
 import { Document, Page, pdfjs } from "react-pdf";
-import { default as InputFile } from '../../components/inputfile';
-import { default as FileList } from '../../components/filelist';
-import {  default as Sketch } from '../Sketch/Sketch';
+import { default as InputFile } from '../../components/Inputfile/inputfile';
+import { default as FileList } from '../../components/Filelist/filelist';
+import { default as Sketch } from '../Sketch/Sketch';
 import { Query, Mutation } from 'react-apollo'
 import { Redirect } from 'react-router-dom';
 import MaterialIcon  from 'material-icons-react'
@@ -74,11 +74,6 @@ class Main extends React.Component {
     this.singleUploadPDF({
       variables: { data: file }
     })
-    //const { files } = this.state;
-    //files.push( file );
-    //this.setState({ files });
-    //this.setState({ currentfile: e.target.files[0]});
-    //this.setState({ pageNumber: 1});
   }
 
   goToPrevPage = () => {
@@ -139,19 +134,19 @@ class Main extends React.Component {
     const { history } = this.props;
     history.push('/login');
   }
+
+  removeDisplay = () => {
+    this.setState({ currentfile: null});
+    this.setState({ pageNumber: 1});
+  }
   
 
-  loadFile = (file) => {
-    // Quick example of short-circuit evaluation
-    //this.setState({ currentfile: file.path.split('/')[1]});
-    
+  loadDisplay = (file) => {   
     //console.log(file.pdf);
-    //console.log("data:application/pdf;base64," + file.pdf)
-    this.setState({ currentfile:  "data:application/pdf;base64," + file.pdf});
+    this.setState({ currentfile: file});
     this.setState({ 
-      pageNumber: 1,
-      fileName: file.filename,
-    });
+      pageNumber: 1, 
+      fileName: file.filename});
   }
 
   render() {
@@ -161,7 +156,6 @@ class Main extends React.Component {
     return (
         <div className="center">
           <div className="Sidebar">
-          {/*
           <Query query={LOGIN_QUERY}>
             {({ loading, error, data}) => {
               if (loading) return <p>Loading...</p>
@@ -170,32 +164,31 @@ class Main extends React.Component {
               if (!login_user)
                 return <Redirect to="/login" />;
               else
-                if (login_user.email==='ADMIN')
-                  return (
-                  <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
-                    { singleUploadPDF => {
-                      this.singleUploadPDF = singleUploadPDF
-                      return (
-                      <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)}>
-                        Select a PDF
-                      </InputFile>)
-                    }}
-                  </Mutation>)
-                else 
-                    return null
+                return (
+                  <div className="head">
+                    <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
+                      { singleUploadPDF => {
+                        this.singleUploadPDF = singleUploadPDF
+                        return (
+                          <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={login_user}>
+                            Select PDF
+                          </InputFile>)
+                      }}
+                    </Mutation>
+                    <Mutation mutation={SIGNOUT_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY }]}>
+                      {signoutUser => {
+                        this.signoutUser = signoutUser;
+                        return (
+                          <div className="signout" onClick={this.signout}> 
+                            EXIT<MaterialIcon icon="exit_to_app"/> 
+                          </div>
+                        );
+                        
+                      }}
+                    </Mutation> 
+                  </div>)
             }}
           </Query>
-          */}
-
-          <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
-              { singleUploadPDF => {
-                this.singleUploadPDF = singleUploadPDF
-                return (
-                <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)}>
-                  Select a PDF
-                </InputFile>)
-              }}
-          </Mutation>
 
 
           <Query query={PDFS_QUERY}>
@@ -207,33 +200,40 @@ class Main extends React.Component {
                   document: PDF_SUBSCRIPTION,
                   updateQuery: (prev, { subscriptionData }) => {
                     if (!subscriptionData.data) return prev
-
-                    const newFile = subscriptionData.data.PDF.data
-                    return {
-                      ...prev,
-                      getPDFs: [newFile, ...prev.getPDFs]
+                    if (subscriptionData.data.PDF.mutation === 'CREATED'){
+                      const newFile = subscriptionData.data.PDF.data
+                      return {
+                        ...prev,
+                        getPDFs: [...prev.getPDFs,newFile]
+                      }
+                    }
+                    else if (subscriptionData.data.PDF.mutation === 'DELETED'){
+                      const deleteFile = subscriptionData.data.PDF.data
+                      const Files = prev.getPDFs.filter(pdf => pdf.id!==deleteFile.id)
+                      if (this.state.currentfile)
+                        if (this.state.currentfile.id === deleteFile.id)
+                          this.removeDisplay()
+                      return {
+                        ...prev,
+                        getPDFs: Files
+                      }
                     }
                   }
                 })   
               let files = data.getPDFs
               if (files[0])
                 return (
-                <FileList files={files} loadFile={this.loadFile} />)
+                <FileList 
+                  files={files} 
+                  loadDisplay={this.loadDisplay} 
+                  user={login_user}
+                  />)
               else
                 return (null)
             }}
           </Query>
-          <Mutation mutation={SIGNOUT_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY }]}>
-                {signoutUser => {
-                  this.signoutUser = signoutUser;
-                  return (
-                    <div className="signout" onClick={this.signout}> 
-                      Log Out<MaterialIcon icon="exit_to_app"/> 
-                    </div>
-                  );
-                }}
-          </Mutation>
           </div>
+
           <div className="Content">
             {
             this.state.currentfile?
@@ -242,7 +242,7 @@ class Main extends React.Component {
             }
             <div className="temp" id="pdfWrapper" ref={(ref) => this.pdfWrapper = ref}>
               <Document
-                file={this.state.currentfile ? this.state.currentfile:null}
+                file={this.state.currentfile ? "data:application/pdf;base64," + this.state.currentfile.pdf:null}
                 onLoadSuccess={this.onDocumentLoadSuccess}
                 onLoadError={(error) => console.log(error.message)}
                 onSourceError={(error) => console.log(error.message)}

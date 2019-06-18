@@ -1,16 +1,69 @@
 import React, { Component } from "react";
 import { Mutation } from 'react-apollo'
-import { MDBRow, MDBCol, MDBBtn, MDBCard, MDBCardBody, MDBInput } from 'mdbreact';
-import {
-    Container,
-    Row,
-    Col,
-  } from 'reactstrap'
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import { withStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
 import {
     CREATE_USER_MUTATION
-  } from '../../graphql'
+} from '../../graphql'
 
-  import './Register.css'
+const ColorButton = withStyles(theme => ({
+    root: {
+      color: theme.palette.getContrastText(green[400]),
+      backgroundColor: green[400],
+      '&:hover': {
+        backgroundColor: green[600],
+      },
+    },
+}))(Button);
+
+const useStyles = theme => ({
+    paper: {
+      marginTop: theme.spacing(5),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    avatar: {
+      backgroundColor: theme.palette.secondary.main,
+      alignItems: 'center',
+      margin: 'auto',
+      marginTop: '10%'
+    },
+    form: {
+      width: '100%',
+      marginTop: theme.spacing(1),
+    },
+    cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+          borderColor: 'green !important',
+          fontSize: '1200'
+        },
+    },
+    cssFocused: {},
+    notchedOutline: {},
+    cssOutlinedLabelInput: {
+        '&$cssLabelFocused': {
+          color: 'green !important',
+        },
+    },
+    cssLabelFocused: {},
+    submit: {
+      margin: theme.spacing(3, 0, 2),
+      color: 'white',
+      fontWeight: '600'
+    },
+    footlink: {
+        display:'flex',
+    }
+  });
+
 
 class Register extends Component {
     constructor(props) {
@@ -24,13 +77,11 @@ class Register extends Component {
 
     handleFormSubmit = e => {
         e.preventDefault()
-    
+
         const { formName, formEmail, formPwd} = this.state
     
-        if (!formEmail || !formPwd || !formName) return
-        
+        if (!formEmail || !formPwd || !formName) return        
         var error = false;
-
         this.createUser({
         variables: {
             name: formName,
@@ -55,73 +106,121 @@ class Register extends Component {
                 });
             }
         })
-      } 
-
+    };
+    
     render () {
-        return (
-            <Container>
-            <Row>
-                <Col>
-                    <h1 className="title">Modern Ceiba</h1>
-                </Col>
-            </Row>
-            <Row className="form-row">
-                <MDBCol className="form-simple" md="6">
-                    <Mutation  mutation={CREATE_USER_MUTATION}>
-                        {createUser => {
-                        this.createUser = createUser
-                        return (
-                            <MDBCard className="form-simple-card">
-                                <div className="header pt-3 grey lighten-2">
-                                <MDBRow className="d-flex justify-content-start">
-                                    <h3 className="deep-grey-text mt-1 mb-1 pb-1 mx-1">
-                                    Sign up
-                                    </h3>
-                                </MDBRow>
-                                </div>
-                                <MDBCardBody className="mx-1 mt-1 form-simple-card-body">
+        const { classes } = this.props;
 
-                                <div className="form-name-age">
-                                    <div className="form-name">
-                                        <MDBInput  label="Your name*" group type="text" validate                                               
-                                                onChange={e => this.setState({ formName: e.target.value })}
-                                                value={this.state.formName}
-                                        />
-                                    </div>
-                                </div>
-                                <MDBInput label="Your email*" group type="text" validate 
-                                        onChange={e => this.setState({ formEmail: e.target.value })}
-                                        value={this.state.formEmail}
-                                />
-                                <MDBInput
-                                    label="Your password*"
-                                    group
-                                    type="password"
-                                    validate
-                                    containerClass="mb-0"
-                                    value={this.state.formPwd}
-                                    onChange={e => this.setState({ formPwd: e.target.value })}
-                                />
-                                <div className="text-center mb-2 mt-2">
-                                    <MDBBtn
-                                    color="danger"
-                                    type="button"
-                                    className="btn-block z-depth-2"
-                                    onClick={this.handleFormSubmit}
-                                    >
-                                    Sign up
-                                    </MDBBtn>
-                                </div>
-                                </MDBCardBody>
-                            </MDBCard>
-                        )}}
+        return (
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <div className={classes.paper}>
+                <h1 style={{fontSize:'50px'}}>Modern Ceiba</h1>
+                <Avatar className={classes.avatar}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Sign Up
+                </Typography>
+                <Mutation  mutation={CREATE_USER_MUTATION}>
+                    {createUser => {
+                    this.createUser = createUser
+                    return (
+                        <form className={classes.form} noValidate>
+                            <TextField
+                                InputProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedInput,
+                                    focused: classes.cssFocused,
+                                    notchedOutline: classes.notchedOutline,
+                                    },
+                                }}
+                                InputLabelProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedLabelInput,
+                                    focused: classes.cssLabelFocused,
+                                    },
+                                }}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="Name"
+                                label="Name"
+                                name="Name"
+                                autoComplete="fname"
+                                autoFocus
+                                onChange={e => this.setState({ formName: e.target.value })}
+                                value={this.state.formName}
+                            />
+                            <TextField
+                                InputProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedInput,
+                                    focused: classes.cssFocused,
+                                    notchedOutline: classes.notchedOutline,
+                                    },
+                                }}
+                                InputLabelProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedLabelInput,
+                                    focused: classes.cssLabelFocused,
+                                    },
+                                }}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                onChange={e => this.setState({ formEmail: e.target.value })}
+                                value={this.state.formEmail}
+                            />
+                            <TextField
+                                InputProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedInput,
+                                    focused: classes.cssFocused,
+                                    notchedOutline: classes.notchedOutline,
+                                    },
+                                }}
+                                InputLabelProps={{
+                                    classes: {
+                                    root: classes.cssOutlinedLabelInput,
+                                    focused: classes.cssLabelFocused,
+                                    },
+                                }}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={e => this.setState({ formPwd: e.target.value })}
+                                value={this.state.formPwd}
+                            />
+                        <ColorButton                  
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                            onClick={this.handleFormSubmit}
+                        >
+                            Sign Up
+                        </ColorButton>
+                        </form>
+                    )}}
                     </Mutation>
-                </MDBCol>
-            </Row>
-        </Container>
-        )
+              </div>
+            </Container>
+          );
     }
 }
 
-
-export default Register;
+export default withStyles(useStyles)(Register);

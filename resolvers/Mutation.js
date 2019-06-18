@@ -4,13 +4,12 @@ import bcrypt from 'bcryptjs'
 
 const Mutation = {
     singleUploadPDF: async (parent, args, {db, models, GridFS, pubsub, utils:{uploadFile, getFile} }, info) => {
-      console.log(args.data)
       const { stream, filename, mimetype, encoding } = await args.data
       const id = uuidv4();
       const result  = await uploadFile(GridFS, stream, {id:id, filename:filename});
       console.log('Upload...'+result)
-      const Upload = {id, filename, mimetype, encoding}
-      const newUpload = new models.Uploadmore(Upload)
+      const Upload = {_id:id, filename, mimetype, encoding}
+      const newUpload = new models.Uploadpdf(Upload)
       try {
         await newUpload.save();
       } catch (e) {
@@ -32,7 +31,25 @@ const Mutation = {
         }
       })
       
-      return Upload;
+      return output_file;
+    },
+
+    deletePDF: async (parent, args, { db, pubsub, models, GridFS, utils:{ deleteFile }}, info) => {
+
+      await models.Uploadpdf.findByIdAndRemove({ _id: args.data.id });
+      const result  = await deleteFile(GridFS, args.data.id);
+      console.log(result)
+      const output_file = {
+        id: args.data.id,
+        filename: args.data.filename 
+      }
+      pubsub.publish('PDF', {
+        PDF: {
+          mutation: 'DELETED',
+          data: output_file
+        }
+      })
+      return output_file
     },
     
     createUser: async (parent, args, { db, pubsub, models}, info) => {
@@ -42,7 +59,7 @@ const Mutation = {
       if (emailTaken) {
         throw new Error('Email taken')
       }
-  
+
       const pwd = await bcrypt.hashSync(args.data.pwd, 10)
       const user = {
         id: uuidv4(),

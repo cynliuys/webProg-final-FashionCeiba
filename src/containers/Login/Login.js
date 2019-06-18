@@ -1,19 +1,74 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import { withStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
 import { Mutation } from 'react-apollo'
-import { MDBRow, MDBCol, MDBBtn, MDBCard, MDBCardBody, MDBInput } from 'mdbreact';
-import {
-    Container,
-    Row,
-    Col,
-  } from 'reactstrap'
+import { green } from '@material-ui/core/colors';
 import {
     LOGIN_USER_MUTATION, 
     LOGIN_QUERY,
     USERS_QUERY
-  } from '../../graphql'
+} from '../../graphql'
 
-import './Login.css'
+
+
+const ColorButton = withStyles(theme => ({
+    root: {
+      color: theme.palette.getContrastText(green[400]),
+      backgroundColor: green[400],
+      '&:hover': {
+        backgroundColor: green[600],
+      },
+    },
+}))(Button);
+
+const useStyles = theme => ({
+    paper: {
+      marginTop: theme.spacing(5),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    avatar: {
+      backgroundColor: theme.palette.secondary.main,
+      alignItems: 'center',
+      margin: 'auto',
+      marginTop: '10%'
+    },
+    form: {
+      width: '100%',
+      marginTop: theme.spacing(1),
+    },
+    cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+          borderColor: 'green !important',
+          fontSize: '1200'
+        },
+    },
+    cssFocused: {},
+    notchedOutline: {},
+    cssOutlinedLabelInput: {
+        '&$cssLabelFocused': {
+          color: 'green !important',
+        },
+    },
+    cssLabelFocused: {},
+    submit: {
+      margin: theme.spacing(3, 0, 2),
+      fontWeight: '600',
+      color: 'white'
+    },
+  });
+
+
 
 class Login extends Component {
     constructor(props) {
@@ -22,12 +77,13 @@ class Login extends Component {
           formEmail: '',
           formPwd: '',
         }
-      }
+    };
 
     SignUp = () => {
         const { history } = this.props;
         history.push('/register');
     };
+
 
     handleFormSubmit = e => {
         e.preventDefault()
@@ -55,73 +111,104 @@ class Login extends Component {
             formEmail: '',
             formPwd: '',
         })
+    };
 
-    }
 
     render () {
+        const { classes } = this.props;
+
         return (
-            <Container>
-                <Row>
-                    <Col>
-                        <h1 className="title">Modern Ceiba</h1>
-                    </Col>
-                </Row>
-                <Row className="form-row">
-                    <MDBCol className="form-simple" md="6">
-                        <MDBCard className="form-simple-card">
-                            <div className="header pt-3 grey lighten-2">
-                            <MDBRow className="d-flex justify-content-start">
-                                <h3 className="deep-grey-text mt-1 mb-1 pb-1 mx-1">
-                                Log in
-                                </h3>
-                            </MDBRow>
-                            </div>
-                            <Mutation mutation={LOGIN_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY, USERS_QUERY }]}>
-                                {loginUser => {
-                                this.loginUser = loginUser
-                                return (
-                                    <MDBCardBody className="mx-1 mt-1 form-simple-card-body">
-                                    <MDBInput label="Your email" group type="text" validate 
-                                              value={this.state.formEmail}
-                                              onChange={e =>
-                                              this.setState({ formEmail: e.target.value })
-                                              }/>
-                                    <MDBInput
-                                        label="Your password"
-                                        group
-                                        type="password"
-                                        validate
-                                        containerClass="mb-0"
-                                        value={this.state.formPwd}
-                                        onChange={e =>
-                                        this.setState({ formPwd: e.target.value })
-                                        }
-                                    />
-                                    <div className="text-center mb-2 mt-2">
-                                        <MDBBtn
-                                        color="danger"
-                                        type="button"
-                                        className="btn-block z-depth-2"
-                                        onClick={this.handleFormSubmit}
-                                        >
-                                        Log in
-                                        </MDBBtn>
-                                    </div>
-                                    <div className="font-small grey-text d-flex justify-content-center">
-                                        Don't have an account?
-                                        <h6 onClick={this.SignUp} className="signup dark-grey-text font-weight-bold ml-1">
-                                            Sign up
-                                        </h6>
-                                    </div>
-                                    </MDBCardBody>
-                                )}}
-                            </Mutation>
-                        </MDBCard>
-                    </MDBCol>
-                </Row>
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <div className={classes.paper}>
+                <h1 style={{fontSize:'50px'}}>Modern Ceiba</h1>
+                <Avatar className={classes.avatar}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Sign In
+                </Typography>
+                <Mutation mutation={LOGIN_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY, USERS_QUERY }]}>
+                {loginUser => {
+                    this.loginUser = loginUser
+                    return (
+                        <form className={classes.form} noValidate>
+                        <TextField
+                            InputProps={{
+                                classes: {
+                                root: classes.cssOutlinedInput,
+                                focused: classes.cssFocused,
+                                notchedOutline: classes.notchedOutline,
+                                },
+                            }}
+                            InputLabelProps={{
+                                classes: {
+                                root: classes.cssOutlinedLabelInput,
+                                focused: classes.cssLabelFocused,
+                                },
+                            }}
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            value={this.state.formEmail}
+                            onChange={e =>this.setState({ formEmail: e.target.value })}
+                        />
+                        <TextField
+                            InputProps={{
+                                classes: {
+                                root: classes.cssOutlinedInput,
+                                focused: classes.cssFocused,
+                                notchedOutline: classes.notchedOutline,
+                                },
+                            }}
+                            InputLabelProps={{
+                                classes: {
+                                root: classes.cssOutlinedLabelInput,
+                                focused: classes.cssLabelFocused,
+                                },
+                            }}
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={this.state.formPwd}
+                            onChange={e =>this.setState({ formPwd: e.target.value })}
+                        />
+                        <ColorButton
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            className={classes.submit}
+                            onClick={this.handleFormSubmit}
+                        >
+                            Sign In
+                        </ColorButton>
+                        <Grid container>
+                            <Grid item >
+                                <Link href="#" variant="body2" onClick={this.SignUp} 
+                                style={{color:'black',fontSize:'15px'}}>
+                                {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                        </form>
+                    )}}
+                </Mutation>
+              </div>
             </Container>
           );
     }
 }
 
-export default Login;
+export default  withStyles(useStyles)(Login);

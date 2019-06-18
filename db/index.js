@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import User from './user';
-import Upload from './upload';
-import Uploadmore from './uploadmore';
+import Uploadpdf from './uploadpdf';
 import Teacher from './teacher';
 
 mongoose.Promise = global.Promise;
@@ -13,7 +12,6 @@ export const startDB = ({ URL }) =>
   
 export const models = {
     User,
-    Upload,
-    Uploadmore,
+    Uploadpdf,
     Teacher
 }
