@@ -79,9 +79,6 @@ const styles = {
     }
 };
 
-let unsubscribe = null;
-
-
 /**
  * Helper function to manually fire an event
  *
@@ -99,27 +96,32 @@ function eventFire(el, etype) {
 }
 
 class Sketch extends React.Component {
-    state = {
-        lineColor: 'black',
-        lineWidth: 10,
-        fillColor: '#68CCCA',
-        backgroundColor: 'transparent',
-        shadowWidth: 0,
-        shadowOffset: 0,
-        tool: Tools.Pencil,
-        fillWithColor: false,
-        fillWithBackgroundColor: false,
-        drawings: [],
-        canUndo: false,
-        canRedo: false,
-        controlledSize: false,
-        stretched: true,
-        stretchedX: false,
-        stretchedY: false,
-        originX: 'left',
-        originY: 'top',
-        upToDate: false,
-    };
+    constructor(props){
+        super(props);
+        this.state = {
+            lineColor: 'black',
+            lineWidth: 10,
+            fillColor: '#68CCCA',
+            backgroundColor: 'transparent',
+            shadowWidth: 0,
+            shadowOffset: 0,
+            tool: Tools.Pencil,
+            fillWithColor: false,
+            fillWithBackgroundColor: false,
+            drawings: [],
+            canUndo: false,
+            canRedo: false,
+            controlledSize: false,
+            stretched: true,
+            stretchedX: false,
+            stretchedY: false,
+            originX: 'left',
+            originY: 'top',
+            upToDate: false,
+        };
+        this.unsubscribe = null;
+    }
+    
     _selectTool = (event, index, value) => {
         this.setState({
             tool: value
@@ -231,12 +233,8 @@ class Sketch extends React.Component {
             reader.readAsDataURL(accepted[0]);
         }
     };
-    sendEditingImage = () => {
 
-      //this.props.socket.emit('editing image', { id: this.props.id, data: this._sketch.toJSON() });
-    }
     componentDidMount = () => {
-
         /*eslint-disable no-console*/
 
         (function (console) {
@@ -314,8 +312,6 @@ class Sketch extends React.Component {
                                         backgroundColor={this.state.fillWithBackgroundColor ? this.state.backgroundColor : 'transparent'}
                                         width={this.props.width }
                                         height={this.props.height }
-                                        // width='1024px' 
-                                        // height='768px'
                                         defaultValue={this.props.sketch}
                                         value={controlledValue}
                                         forceValue={true}
@@ -329,11 +325,11 @@ class Sketch extends React.Component {
                                 {({loading, error, data, subscribeToMore}) => {
                                     if (loading) return <p>Loading...</p>
                                     if (error) return <p>Error...</p>
-                                    if (!unsubscribe) unsubscribe = subscribeToMore({
+                                    if (!this.unsubscribe) this.unsubscribe = subscribeToMore({
                                         document: TEACHER_PIC_SUBSCRIPTION,
                                         updateQuery: (prev, { subscriptionData }) => {
                                             if (!subscriptionData.data) return prev;
-                                            console.log("updateQuery : ",subscriptionData.data);
+                                            console.log("updateQuery !");
                                             const newData = subscriptionData.data.PIC.data;
                                             if(subscriptionData.data.PIC.mutation === "CREATED"){
                                                 return {
@@ -369,10 +365,11 @@ class Sketch extends React.Component {
                                     console.log(data.getTeacherPic)
                                     data.getTeacherPic.map((picture) =>{
                                         if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
-                                            // this._sketch.addImg(picture.pic);
-                                            this._sketch.setBackgroundFromDataUrl(picture.pic, {
-                                                stretched: true,
-                                            })
+                                            if(this._sketch){
+                                                this._sketch.setBackgroundFromDataUrl(picture.pic, {
+                                                    stretched: true,
+                                                })
+                                            }
                                         }
                                     });
                                     return null;

@@ -24,7 +24,6 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //files: [],
       currentfile: null,
       currentPages: 0,
       pageNumber: 1, 
@@ -56,11 +55,13 @@ class Main extends React.Component {
   }
 
   setDivSize = () => {
-    this.setState({
-      height: this.pdfWrapper.getBoundingClientRect().height,
-      skechH: this.pdfWrapper.getBoundingClientRect().height,
-      skechW: this.pdfWrapper.getBoundingClientRect().height*this.state.skechWH,
-    })
+    if(this.pdfWrapper){
+      this.setState({
+        height: this.pdfWrapper.getBoundingClientRect().height,
+        skechH: this.pdfWrapper.getBoundingClientRect().height,
+        skechW: this.pdfWrapper.getBoundingClientRect().height*this.state.skechWH,
+      })
+    }
   }
 
   uploadFileHandler = e => {
@@ -78,7 +79,6 @@ class Main extends React.Component {
 
   goToPrevPage = () => {
     this.clearSketch = true;
-    console.log("now true");
     document.activeElement.blur()
     if (this.state.currentPages === 0)
       return
@@ -96,7 +96,6 @@ class Main extends React.Component {
 
   goToNextPage = () => {
     this.clearSketch = true;
-    console.log("now true");
     document.activeElement.blur()
     if (this.state.currentPages === 0)
       return
@@ -124,10 +123,7 @@ class Main extends React.Component {
       skechW: page.height*page.originalWidth/page.originalHeight,
       skechWH: page.originalWidth/page.originalHeight
     });
-
   }
-
-
 
   signout = () => {
     this.signoutUser()
@@ -151,7 +147,6 @@ class Main extends React.Component {
 
   render() {
     //let { files} = this.state;
-    //console.log("Files", files)
     var login_user = null;
     return (
         <div className="center">
@@ -246,7 +241,6 @@ class Main extends React.Component {
                 onLoadSuccess={this.onDocumentLoadSuccess}
                 onLoadError={(error) => console.log(error.message)}
                 onSourceError={(error) => console.log(error.message)}
-                onDocumentLoad={({total, width})=>{console.log("gogo : ", total, width)}}
                 noData={null}
                 loading={null}
               >
@@ -264,8 +258,6 @@ class Main extends React.Component {
                 <button className="PageButton" onClick={this.goToNextPage} onKeyPress={this.goToNextPage}>{`>`}</button>
               </div>:null}
               {this.clearSketch = false}
-              {console.log("now false")}
-
             </div>
           </div>
         </div>

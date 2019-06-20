@@ -10,15 +10,15 @@ import { getFile,  uploadFile, deleteFile } from './utils/upload';
 import session from 'express-session';
 import ms from 'ms';
 
-
+const bodyParser = require('body-parser')
 const cors = require("cors");
 const mongoose = require("mongoose");
 const { GridFSBucket } = require('mongodb');
 
 const db = startDB({ URL: process.env.MONGO });
 const pubsub = new PubSub()
-mongoose.set('useFindAndModify', false);
 
+mongoose.set('useFindAndModify', false);
 mongoose.connection.once("open", () => {
   
 const GridFS = new GridFSBucket(mongoose.connection.db, {bucketName: 'pdfs',chunkSizeBytes: 255 * 1024 });
@@ -57,16 +57,16 @@ server.express.use(session({
 }));
 
 server.express.set('trust proxy', true)
+server.express.use(bodyParser({ limit: '16mb' }));
 
 const opts = {
     port: process.env.PORT || 4000,
     cors: {
       credentials: true,
       origin: ['http://localhost:3000','http://localhost:3001']
-    }
+    },
 };
 
 server.start(opts, 
 () => console.log(`Server is running on http://localhost:${opts.port}`));
-
 })
