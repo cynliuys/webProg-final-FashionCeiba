@@ -95,3 +95,27 @@ export const TEACHER_PIC_MUTATION = gql`
     }
   } 
 `
+
+export const STUDENT_PIC_MUTATION = gql`
+  mutation studentPic (
+      $pic: String!
+      $filename: String!
+      $page: String!
+      $student: String!
+    ){
+      studentPic(
+        data: {
+          pic: $pic
+          filename: $filename
+          page: $page
+          student: $student
+        })
+      {
+        id
+        pic
+        filename
+        page
+        student
+    }
+  } 
+`

@@ -11,6 +11,12 @@ const Subscription = {
       }
     },
 
+    studentPIC: {
+      subscribe: async(parent, args, { pubsub }, info) => {
+        return pubsub.asyncIterator('studentPIC')
+      }
+    },
+
 }
 
 export { Subscription as default }

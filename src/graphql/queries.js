@@ -38,3 +38,15 @@ export const TEACHER_PIC_QUERY = gql`
     }
   }
 `
+
+export const STUDENT_PIC_QUERY = gql`
+    query($student: String!) {
+        getStudentPic(student: $student){
+          id
+          pic
+          filename
+          page
+          student
+    }
+  }
+`

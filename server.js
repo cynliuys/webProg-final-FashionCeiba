@@ -3,12 +3,14 @@ require('dotenv').config();
 //const path = require("path");
 import { GraphQLServer, PubSub } from 'graphql-yoga';
 import { startDB, models } from './db';
+import { newStudentSchema } from './db/student.js';
 import Query from './resolvers/Query';
 import Mutation from './resolvers/Mutation';
 import Subscription from './resolvers/Subscription';
 import { getFile,  uploadFile, deleteFile } from './utils/upload';
 import session from 'express-session';
 import ms from 'ms';
+
 
 const bodyParser = require('body-parser')
 const cors = require("cors");
@@ -70,3 +72,14 @@ const opts = {
 server.start(opts, 
 () => console.log(`Server is running on http://localhost:${opts.port}`));
 })
+
+// Create students Schema into models
+async function updateStudentsList(){
+  const StudentsList = await models.StudentsList.find({}); 
+  StudentsList.map((student)=>{
+    let newSchema = newStudentSchema(student.name);
+    models[student.name] = newSchema;
+  })
+}
+
+updateStudentsList();

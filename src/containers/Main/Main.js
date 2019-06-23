@@ -34,6 +34,7 @@ class Main extends React.Component {
       skechWH: null,
     }
     this.clearSketch = false;
+    this.login_user = null;
   }
    
   keyFunction = e => {
@@ -147,7 +148,6 @@ class Main extends React.Component {
 
   render() {
     //let { files} = this.state;
-    var login_user = null;
     return (
         <div className="center">
           <div className="Sidebar">
@@ -155,17 +155,17 @@ class Main extends React.Component {
             {({ loading, error, data}) => {
               if (loading) return <p>Loading...</p>
               if (error) return <p>Error :(((</p>
-              login_user = data.isLogin
-              if (!login_user)
+              this.login_user = data.isLogin
+              if (!this.login_user)
                 return <Redirect to="/login" />;
-              else
+              else{
                 return (
                   <div className="head">
                     <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
                       { singleUploadPDF => {
                         this.singleUploadPDF = singleUploadPDF
                         return (
-                          <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={login_user}>
+                          <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={this.login_user}>
                             Select PDF
                           </InputFile>)
                       }}
@@ -182,6 +182,7 @@ class Main extends React.Component {
                       }}
                     </Mutation> 
                   </div>)
+              }
             }}
           </Query>
 
@@ -216,13 +217,14 @@ class Main extends React.Component {
                   }
                 })   
               let files = data.getPDFs
-              if (files[0])
+              if (files[0]){
                 return (
                 <FileList 
                   files={files} 
                   loadDisplay={this.loadDisplay} 
-                  user={login_user}
+                  user={this.login_user}
                   />)
+              }
               else
                 return (null)
             }}
@@ -246,7 +248,7 @@ class Main extends React.Component {
               >
                 <Page onLoadSuccess={this.onLoadSuccess} pageNumber={this.state.pageNumber} height={this.state.height} />
                 <Sketch height={this.state.skechH} width={this.state.skechW} clear={this.clearSketch}
-                        fileName={this.state.fileName} page={this.state.pageNumber} />
+                        fileName={this.state.fileName} page={this.state.pageNumber} user={this.login_user}/>
               </Document>
               {this.state.currentfile?<div className="Foot">
                 <button className="PageButton" onClick={this.goToPrevPage} onKeyPress={this.goToPrevPage}>{`<`}</button>

@@ -45,8 +45,8 @@
   },
   "scripts": {
     "server": "nodemon server.js --ext js,graphql --exec babel-node",
-    "client1": "set PORT=3000 && react-scripts start",
-    "client2": "set PORT=3001 && react-scripts start",
+    "client1": "export PORT=3000 && react-scripts start",
+    "client2": "export PORT=3001 && react-scripts start",
     "build": "react-scripts build"
   },
   "eslintConfig": {

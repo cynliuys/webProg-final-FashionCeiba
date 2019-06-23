@@ -1,8 +1,9 @@
 import React from 'react';
 import { CompactPicker } from 'react-color';
-import { Query, Mutation } from 'react-apollo'
+import { Mutation } from 'react-apollo'
 import 'flexboxgrid';
 import './Sketch.css';
+import PicQuery from'../../components/PicQuery';
 import {
     AppBar, Card, CardHeader, CardText, GridList, GridTile, IconButton, MenuItem,
     RaisedButton, SelectField, Slider, TextField, Toggle, ToolbarSeparator
@@ -14,15 +15,11 @@ import ZoomInIcon from 'material-ui/svg-icons/action/zoom-in';
 import ZoomOutIcon from 'material-ui/svg-icons/action/zoom-out';
 import { SketchField, Tools } from 'react-sketch';
 import {
-    TEACHER_PIC_MUTATION, TEACHER_PIC_QUERY, TEACHER_PIC_SUBSCRIPTION
+    TEACHER_PIC_MUTATION, STUDENT_PIC_MUTATION, 
 
 } from '../../graphql'
 
-
-const dataJson = {};
-const dataJsonControlled = {};
 const dataUrl = "";
-
 const styles = {
     root: {
         padding: '3px',
@@ -204,18 +201,21 @@ class Sketch extends React.Component {
           this.setState({ upToDate: false });
         } else  {
             var error = false;
-            this.teacherPic({
-                variables: {
-                    pic: this._sketch.toDataURL(),
-                    filename: this.props.fileName,
-                    page: this.props.page
-                    }
-                })
+            let data = {
+                pic: this._sketch.toDataURL(),
+                filename: this.props.fileName,
+                page: this.props.page
+            }
+            if(this.props.user.name !== 'ADMIN'){
+                data.student = this.props.user.name;
+            }
+            this.updatePic({
+                variables: data
+            })
             .catch(() => { error=true; alert('error in updatePic!');})
             .then(() => {
                 console.log("Mutation !");
             });
-
         }
     };
     _onBackgroundImageDrop = (accepted/*, rejected*/) => {
@@ -295,16 +295,23 @@ class Sketch extends React.Component {
             <div className="overlay">
                 <MuiThemeProvider muiTheme={getMuiTheme()}>
                     <div className='row'>
-                        
-                        {/* Sketch area */}
+                        {/* Sketch Area */}
                         <div className='col-xs-7 col-sm-7 col-md-9 col-lg-9'>
-                            <Mutation  mutation={TEACHER_PIC_MUTATION}>
-                                {teacherPic => {
-                                    this.teacherPic = teacherPic;
+                            {/* Teacher Pic */}
+                            {(this.props.user.name!=='ADMIN')?
+                                <PicQuery isTeacher={true} user={this.props.user.name}
+                                    picOnField={false} sketch={this._sketch} width={this.props.width} height={this.props.height}
+                                    fileName={this.props.fileName} page={this.props.page}/>:(null)
+                            }
+
+                            {/* Teacher Sketch or Student Sketch */}
+                            <Mutation  mutation={(this.props.user.name==='ADMIN')?TEACHER_PIC_MUTATION:STUDENT_PIC_MUTATION}>
+                                {updatePic => {
+                                    this.updatePic = updatePic;
                                     return ( 
                                     <SketchField
                                         name='sketch'
-                                        className='sketchfield'
+                                        className='sketch_field_class'
                                         ref={(c) => this._sketch = c}
                                         lineColor={this.state.lineColor}
                                         lineWidth={this.state.lineWidth}
@@ -321,62 +328,17 @@ class Sketch extends React.Component {
                                 )}}
                             </Mutation>
 
-                            <Query query={TEACHER_PIC_QUERY}>
-                                {({loading, error, data, subscribeToMore}) => {
-                                    if (loading) return <p>Loading...</p>
-                                    if (error) return <p>Error...</p>
-                                    if (!this.unsubscribe) this.unsubscribe = subscribeToMore({
-                                        document: TEACHER_PIC_SUBSCRIPTION,
-                                        updateQuery: (prev, { subscriptionData }) => {
-                                            if (!subscriptionData.data) return prev;
-                                            console.log("updateQuery !");
-                                            const newData = subscriptionData.data.PIC.data;
-                                            if(subscriptionData.data.PIC.mutation === "CREATED"){
-                                                return {
-                                                    ...prev,
-                                                    getTeacherPic: [newData, ...prev.getTeacherPic]
-                                                }
-                                            }
-                                            else if(subscriptionData.data.PIC.mutation === "UPDATED"){
-                                                let a = prev.getTeacherPic.map((prevData)=>{
-                                                    if(prevData.filename===newData.filename &&
-                                                        prevData.page===newData.page){
-                                                            return newData;
-                                                    }
-                                                    else{
-                                                        return prevData;
-                                                    }
-                                                });
-                                                return{
-                                                    ...prev,
-                                                    getTeacherPic: a
-                                                }
-                                            }
-                                        }
-                                    }) 
-
-                                    if(Object.keys(data).length ===  0){
-                                        return null; 
-                                    }
-                                    if(data.getTeacherPic.length ===  0){
-                                        return null; 
-                                    }
-                                    console.log("Query !");
-                                    console.log(data.getTeacherPic)
-                                    data.getTeacherPic.map((picture) =>{
-                                        if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
-                                            if(this._sketch){
-                                                this._sketch.setBackgroundFromDataUrl(picture.pic, {
-                                                    stretched: true,
-                                                })
-                                            }
-                                        }
-                                    });
-                                    return null;
-          
-                                }}
-                            </Query>
-
+                            {/* Self Pic */}
+                            {(this.props.user.name==='ADMIN')?
+                                /* Teacher Self Pic */
+                                (<PicQuery isTeacher={true} user={this.props.user.name}
+                                    picOnField={true} sketch={this._sketch}
+                                    fileName={this.props.fileName} page={this.props.page}/>):
+                                /* Student Self Pic */
+                                (<PicQuery isTeacher={false} user={this.props.user.name}
+                                    picOnField={true} sketch={this._sketch}
+                                    fileName={this.props.fileName} page={this.props.page}/>)
+                            }
                         </div>
                         {/* Tool Box */}
                         <div className='col-xs-5 col-sm-5 col-md-3 col-lg-3 sidebar'>
@@ -462,37 +424,7 @@ class Sketch extends React.Component {
 
                                     <br />
                                     <br />
-                                    {/*
-                                    <label htmlFor='lineColor'>Set Image Background</label>
-                                    <br />
-
-                                    <Toggle label="Fit canvas (X,Y)"
-                                        defaultToggled={this.state.stretched}
-                                        onToggle={(e) => this.setState({ stretched: !this.state.stretched })} />
-
-                                    <Toggle label="Fit canvas (X)"
-                                        defaultToggled={this.state.stretchedX}
-                                        onToggle={(e) => this.setState({ stretchedX: !this.state.stretchedX })} />
-
-                                    <Toggle label="Fit canvas (Y)"
-                                        defaultToggled={this.state.stretchedY}
-                                        onToggle={(e) => this.setState({ stretchedY: !this.state.stretchedY })} />
-
-                                    <div>
-                                        <DropZone
-                                            ref="dropzone"
-                                            accept='image/*'
-                                            multiple={false}
-                                            style={styles.dropArea}
-                                            activeStyle={styles.activeStyle}
-                                            rejectStyle={styles.rejectStyle}
-                                            onDrop={this._onBackgroundImageDrop}>
-                                            Try dropping an image here,<br />
-                                            or click<br />
-                                            to select image as background.
-                                        </DropZone>
-                                    </div>
-                                    */}
+                                    
                                 </CardText>
                             </Card>
                             <Card style={{ margin: '5px 10px 5px 0' }}>
@@ -523,14 +455,10 @@ class Sketch extends React.Component {
                                             label='Load Image from Data URL'
                                             onClick={(e) => this._sketch.addImg(dataUrl)} />
                                     </div>
-
                                 </CardText>
                             </Card>
-
-                            
                         </div>
                     </div>
-
                 </MuiThemeProvider>
             </div>
         )

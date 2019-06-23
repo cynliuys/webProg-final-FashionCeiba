@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4'
 import bcrypt from 'bcryptjs'
-
+import {newStudentSchema} from '../db/student.js';
 
 const Mutation = {
     singleUploadPDF: async (parent, args, {db, models, GridFS, pubsub, utils:{uploadFile, getFile} }, info) => {
@@ -142,6 +142,70 @@ const Mutation = {
       else{
         pubsub.publish('PIC', {
           PIC: {
+            mutation: 'CREATED',
+            data: data
+          }
+        })
+      }
+      return data
+    },
+
+    studentPic: async (parent, args, {db, models, pubsub, req}, info) => {
+      const { pic, filename, page, student } = await args.data;
+      const id = uuidv4();
+      const data = {
+        id: id,
+        pic: pic,
+        filename: filename,
+        page: page,
+        student: student
+      }
+      /* New Schema */
+      if(!models[student]){
+        console.log( "New Schema ",student);
+        let newSchema = newStudentSchema(student);
+        models[student] = newSchema;
+        const newList = new models.StudentsList({name: student})
+        try {
+          await newList.save();
+        } 
+        catch (e) {
+          throw new Error('Cannot Save ',student ,'!!!');
+        }
+      }
+      const Students = await models[student].find({});
+      let exist = false;
+      exist = Students.some(
+        (pic) => (pic.filename===data.filename && pic.page===data.page)
+      );
+      if(exist){
+        console.log("StudentPic update!");
+        let query = {'filename': data.filename, 'page': data.page};
+        models[student].findOneAndUpdate(query, { id: data.id, pic: data.pic },  function(err, doc){
+          if (err) console.log(err);
+        });
+      }
+      else{
+        console.log("StudentPic new!");
+        const newPic = new models[student](data)
+        try {
+          await newPic.save();
+        } 
+        catch (e) {
+          throw new Error('Cannot Save ',student ,'!!!');
+        }
+      }
+      if(exist){
+        pubsub.publish('studentPIC', {
+          studentPIC: {
+            mutation: 'UPDATED',
+            data: data
+          }
+        })
+      }
+      else{
+        pubsub.publish('studentPIC', {
+          studentPIC: {
             mutation: 'CREATED',
             data: data
           }

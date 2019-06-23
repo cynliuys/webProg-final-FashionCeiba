@@ -26,3 +26,18 @@ export const TEACHER_PIC_SUBSCRIPTION = gql`
     }
 }
 `
+
+export const STUDENT_PIC_SUBSCRIPTION = gql`
+  subscription {
+    studentPIC {
+      mutation
+      data{
+        id
+        pic
+        filename
+        page
+        student
+      }
+    }
+}
+`

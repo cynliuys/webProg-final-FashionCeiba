@@ -34,6 +34,11 @@ const Query = {
         const Teacher = await models.Teacher.find({});  
         return Teacher;
     },
+
+    getStudentPic:  async(parent, args, { db, models, req }, info) => {
+        const Students = await models[args.student].find({});  
+        return Students;
+    },
 }
 
 export { Query as default }
