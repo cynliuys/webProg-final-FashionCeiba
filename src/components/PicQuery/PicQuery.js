@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo'
 import 'flexboxgrid';
-//import './PicQuery.css';
+import './PicQuery.css';
 
 import {
     TEACHER_PIC_QUERY, TEACHER_PIC_SUBSCRIPTION, STUDENT_PIC_QUERY, STUDENT_PIC_SUBSCRIPTION

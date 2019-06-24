@@ -3,7 +3,7 @@ import { CompactPicker } from 'react-color';
 import { Mutation } from 'react-apollo'
 import 'flexboxgrid';
 import './Sketch.css';
-import PicQuery from'../../components/PicQuery';
+import PicQuery from'../../components/PicQuery/PicQuery';
 import {
     AppBar, Card, CardHeader, CardText, GridList, GridTile, IconButton, MenuItem,
     RaisedButton, SelectField, Slider, TextField, Toggle, ToolbarSeparator
@@ -311,7 +311,7 @@ class Sketch extends React.Component {
                                     return ( 
                                     <SketchField
                                         name='sketch'
-                                        className='sketch_field_class'
+                                        className='sketchfield'
                                         ref={(c) => this._sketch = c}
                                         lineColor={this.state.lineColor}
                                         lineWidth={this.state.lineWidth}
