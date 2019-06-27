@@ -4,10 +4,9 @@ import { Mutation } from 'react-apollo'
 import 'flexboxgrid';
 import './Sketch.css';
 import PicQuery from'../../components/PicQuery/PicQuery';
-import {
-    AppBar, Card, CardHeader, CardText, GridList, GridTile, IconButton, MenuItem,
-    RaisedButton, SelectField, Slider, TextField, Toggle, ToolbarSeparator
-} from 'material-ui';
+import Toolbox from'../../components/Toolbox/Toolbox';
+
+import { GridTile, IconButton } from 'material-ui';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RemoveIcon from 'material-ui/svg-icons/content/clear';
@@ -16,7 +15,6 @@ import ZoomOutIcon from 'material-ui/svg-icons/action/zoom-out';
 import { SketchField, Tools } from 'react-sketch';
 import {
     TEACHER_PIC_MUTATION, STUDENT_PIC_MUTATION, 
-
 } from '../../graphql'
 
 const dataUrl = "";
@@ -96,14 +94,16 @@ class Sketch extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            tool: Tools.Pencil,
+            lineWidth: 8.5,
             lineColor: 'black',
-            lineWidth: 10,
             fillColor: '#68CCCA',
+            fillWithColor: false,
+
+
             backgroundColor: 'transparent',
             shadowWidth: 0,
             shadowOffset: 0,
-            tool: Tools.Pencil,
-            fillWithColor: false,
             fillWithBackgroundColor: false,
             drawings: [],
             canUndo: false,
@@ -118,32 +118,38 @@ class Sketch extends React.Component {
         };
         this.unsubscribe = null;
     }
-    
-    _selectTool = (event, index, value) => {
+
+    handleTool = (e, i, v)=>{
         this.setState({
-            tool: value
+            tool: v
+        });    
+    }
+
+    handleWidth = (e, v)=>{
+        console.log(v);
+        this.setState({
+            lineWidth: v * 15 + 1
         });
-    };
-    _save = () => {
-        let drawings = this.state.drawings;
-        drawings.push(this._sketch.toDataURL());
-        this.setState({ drawings: drawings });
-        //this.props.saveImage(this._sketch.toDataURL())
-    };
-    _download = () => {
-        /*eslint-disable no-console*/
-        console.save(this._sketch.toDataURL(), 'toDataURL.txt');
-        console.save(JSON.stringify(this._sketch.toJSON()), 'toDataJSON.txt');
+    }
 
-        /*eslint-enable no-console*/
+    handleLineColor = (color)=>{
+        this.setState({
+            lineColor: color.hex
+        });
+    }
 
-        let { imgDown } = this.refs;
-        let event = new Event('click', {});
+    handleFillWithColor = ()=>{
+        this.setState({
+            fillWithColor: !this.state.fillWithColor
+        });
+    }
 
-        imgDown.href = this._sketch.toDataURL();
-        imgDown.download = 'toPNG.png';
-        imgDown.dispatchEvent(event);
-    };
+    handleFillColor = (color)=>{
+        this.setState({
+            fillColor: color.hex
+        });
+    }
+    
     _renderTile = (drawing, index) => {
         return (
             <GridTile
@@ -308,7 +314,7 @@ class Sketch extends React.Component {
                             <Mutation  mutation={(this.props.user.name==='ADMIN')?TEACHER_PIC_MUTATION:STUDENT_PIC_MUTATION}>
                                 {updatePic => {
                                     this.updatePic = updatePic;
-                                    return ( 
+                                    return (
                                     <SketchField
                                         name='sketch'
                                         className='sketchfield'
@@ -332,132 +338,21 @@ class Sketch extends React.Component {
                             {(this.props.user.name==='ADMIN')?
                                 /* Teacher Self Pic */
                                 (<PicQuery isTeacher={true} user={this.props.user.name}
-                                    picOnField={true} sketch={this._sketch}
+                                    picOnField={true} sketch={this._sketch} width={this.props.width} height={this.props.height}
                                     fileName={this.props.fileName} page={this.props.page}/>):
                                 /* Student Self Pic */
                                 (<PicQuery isTeacher={false} user={this.props.user.name}
-                                    picOnField={true} sketch={this._sketch}
+                                    picOnField={true} sketch={this._sketch} width={this.props.width} height={this.props.height}
                                     fileName={this.props.fileName} page={this.props.page}/>)
                             }
                         </div>
                         {/* Tool Box */}
-                        <div className='col-xs-5 col-sm-5 col-md-3 col-lg-3 sidebar'>
-                            <Card style={{ margin: '10px 10px 5px 0' }} classes={{root: 'card'}}>
-                                <CardHeader title='Tools' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                <CardText expandable={true}>
-                                    <label htmlFor='tool'>Canvas Tool</label><br />
-                                    <SelectField ref='tool' value={this.state.tool} onChange={this._selectTool}>
-                                        <MenuItem value={Tools.Select} primaryText="Select" />
-                                        <MenuItem value={Tools.Pencil} primaryText="Pencil" />
-                                        <MenuItem value={Tools.Line} primaryText="Line" />
-                                        <MenuItem value={Tools.Rectangle} primaryText="Rectangle" />
-                                        <MenuItem value={Tools.Circle} primaryText="Circle" />
-                                        <MenuItem value={Tools.Pan} primaryText="Pan" />
-                                    </SelectField>
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <label htmlFor='slider'>Line Weight</label>
-                                    <Slider ref='slider' step={0.1}
-                                        defaultValue={this.state.lineWidth / 100}
-                                        onChange={(e, v) => this.setState({ lineWidth: v * 100 })} />
-                                    <br />
-                                    <label htmlFor='zoom'>Zoom</label>
-                                    <div>
-                                        <IconButton
-                                            ref='zoom'
-                                            onClick={(e) => this._sketch.zoom(1.25)}>
-                                            <ZoomInIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            ref='zoom1'
-                                            onClick={(e) => this._sketch.zoom(0.8)}>
-                                            <ZoomOutIcon />
-                                        </IconButton>
-                                        <br />
-                                        <br />
-                                        <Toggle label="Control size"
-                                            defaultToggled={this.state.controlledSize}
-                                            onToggle={(e) => this.setState({ controlledSize: !this.state.controlledSize })} />
-                                        <br />
-                                        <label htmlFor='xSize'>Change Canvas Width</label>
-                                        <Slider ref='xSize' step={1}
-                                            min={10} max={1000}
-                                            defaultValue={this.state.sketchWidth}
-                                            onChange={(e, v) => this.setState({ sketchWidth: v })} />
-                                        <br />
-                                        <label htmlFor='ySize'>Change Canvas Height</label>
-                                        <Slider ref='ySize' step={1}
-                                            min={10} max={1000}
-                                            defaultValue={this.state.sketchHeight}
-                                            onChange={(e, v) => this.setState({ sketchHeight: v })} />
-                                        <br />
-                                    </div>
-                                </CardText>
-                            </Card>
-                            <Card style={{ margin: '5px 10px 5px 0' }}>
-                                <CardHeader title='Colors' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                <CardText expandable={true}>
-                                    <label htmlFor='lineColor'>Line</label>
-                                    <CompactPicker
-                                        id='lineColor' color={this.state.lineColor}
-                                        onChange={(color) => this.setState({ lineColor: color.hex })} />
-                                    <br />
-                                    <br />
-                                    <Toggle label="Fill"
-                                        defaultToggled={this.state.fillWithColor}
-                                        onToggle={(e) => this.setState({ fillWithColor: !this.state.fillWithColor })} />
-                                    <CompactPicker
-                                        color={this.state.fillColor}
-                                        onChange={(color) => this.setState({ fillColor: color.hex })} />
-                                </CardText>
-                            </Card>
-                            <Card style={{ margin: '5px 10px 5px 0' }}>
-                                <CardHeader title='Background' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                <CardText expandable={true}>
-                                    <Toggle label="Background Color"
-                                        defaultToggled={this.state.fillWithBackgroundColor}
-                                        onToggle={(e) => this.setState({ fillWithBackgroundColor: !this.state.fillWithBackgroundColor })} />
-                                    <CompactPicker
-                                        color={this.state.backgroundColor}
-                                        onChange={(color) => this.setState({ backgroundColor: color.hex })} />
-
-                                    <br />
-                                    <br />
-                                    
-                                </CardText>
-                            </Card>
-                            <Card style={{ margin: '5px 10px 5px 0' }}>
-                                <CardHeader title='Images' actAsExpander={true} showExpandableButton={true} style={styles.cardHeader}/>
-                                <CardText expandable={true}>
-
-                                    <div>
-                                        <TextField
-                                            floatingLabelText='Image URL'
-                                            hintText='Copy/Paste an image URL'
-                                            ref={(c) => {this._imageUrlTxt = c}}                                                defaultValue='https://files.gamebanana.com/img/ico/sprays/4ea2f4dad8d6f.png' />
-
-                                        <br />
-
-                                        <RaisedButton
-                                            label='Load Image from URL'
-                                            onClick={(e) => {
-                                                this._sketch.addImg(this._imageUrlTxt.getValue());
-                                            }} />
-                                    </div>
-
-                                    <br />
-
-                                    <br />
-
-                                    <div>
-                                        <RaisedButton
-                                            label='Load Image from Data URL'
-                                            onClick={(e) => this._sketch.addImg(dataUrl)} />
-                                    </div>
-                                </CardText>
-                            </Card>
-                        </div>
+                        <Toolbox handleTool={(e, i, v)=>this.handleTool(e, i, v)} tool={this.state.tool}
+                                handleWidth={(e, v)=>this.handleWidth(e, v)} width={this.state.tool}
+                                handleLineColor={(color)=>this.handleLineColor(color)} lineColor={this.state.lineColor}
+                                handleFillWithColor={()=>this.handleFillWithColor()} fillWithColor={this.state.fillWithColor}
+                                handleFillColor={(color)=>this.handleFillColor(color)} fillColor={this.state.fillColor}
+                            />
                     </div>
                 </MuiThemeProvider>
             </div>

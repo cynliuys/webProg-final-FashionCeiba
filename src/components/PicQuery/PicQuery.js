@@ -23,6 +23,8 @@ class PicQuery extends React.Component {
                 if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
                     if(this.props.picOnField){
                         if(this.props.sketch){
+                            this.props.sketch._fc.height = this.props.height;
+                            this.props.sketch._fc.width = this.props.width;
                             this.props.sketch.setBackgroundFromDataUrl(picture.pic, {
                                 stretched: true,
                             })
@@ -38,16 +40,15 @@ class PicQuery extends React.Component {
         else{
             if(Object.keys(data).length ===  0){ return null; }
             if(data.getStudentPic.length ===  0){ return null; }
-            console.log("Query !");
             data.getStudentPic.map((picture) =>{
-                console.log("a !");
                 if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
-                    console.log("b !");
                     if(this.props.sketch){
-                        console.log("_sketch")
-                        this.props.sketch.setBackgroundFromDataUrl(picture.pic, {
-                            stretched: true,
-                        })
+                        // this.props.sketch.setBackgroundFromDataUrl(picture.pic, {
+                        //     stretched: true,
+                        // })
+                        this.props.sketch.addImg(picture.pic, {
+                            scale: 0.5,
+                        });
                     }
                 }
             });
@@ -104,7 +105,6 @@ class PicQuery extends React.Component {
                             }
                         }
                     })
-                    console.log(this.showQuery(data));
                     return this.showQuery(data);
                 }}
             </Query>
