@@ -11,7 +11,6 @@ export default class InputFile extends React.Component {
         var visibilityState = this.props.user.email==='ADMIN';
         return (
             <div className="InputFile">
-              {visibilityState? null:<h3 className="name">Hi! {this.props.user.name}</h3>}
               <Button onClick={this.triggerInput} type="primary" visible={visibilityState}>
                   <input 
                       name="file" 

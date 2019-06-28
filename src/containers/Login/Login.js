@@ -22,10 +22,10 @@ import {
 
 const ColorButton = withStyles(theme => ({
     root: {
-      color: theme.palette.getContrastText(green[400]),
-      backgroundColor: green[400],
+      color: theme.palette.getContrastText(green[600]),
+      backgroundColor: green[600],
       '&:hover': {
-        backgroundColor: green[600],
+        backgroundColor: green[800],
       },
     },
 }))(Button);
@@ -121,12 +121,11 @@ class Login extends Component {
             <Container component="main" maxWidth="xs">
               <CssBaseline />
               <div className={classes.paper}>
-                <h1 style={{fontSize:'50px'}}>Modern Ceiba</h1>
                 <Avatar className={classes.avatar}>
                   <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                  Sign In
+                  Log In
                 </Typography>
                 <Mutation mutation={LOGIN_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY, USERS_QUERY }]}>
                 {loginUser => {
@@ -192,7 +191,7 @@ class Login extends Component {
                             className={classes.submit}
                             onClick={this.handleFormSubmit}
                         >
-                            Sign In
+                            Log In
                         </ColorButton>
                         <Grid container>
                             <Grid item >

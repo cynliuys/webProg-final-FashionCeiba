@@ -9,9 +9,11 @@ enum MutationType {
 type Query {
     getPDFs: [File]
     getUSERs: [User!]!
+    getTODOs: [Todo!]!
     isLogin: User
     getTeacherPic: [Picture]
     getStudentPic(student: String!): [Picture]
+    chats: [Chat]
 }
 
 type Mutation {
@@ -22,12 +24,17 @@ type Mutation {
     signoutUser: Boolean!
     teacherPic(data: PicInput!): Picture!
     studentPic(data: PicInput!): Picture!
+    createTodo(data: CreateTodoInput): Todo!
+    deleteTodo(id: ID!): Todo!
+    sendMessage(from: String!, message: String!): Chat!
 }
 
 type Subscription {
   PDF: PDFSubscriptionPayload!
   PIC: PICSubscriptionPayload!
+  TODO: TODOSubscriptionPayload
   studentPIC: PICSubscriptionPayload!
+  messageSent: Chat!
 }
 
 
@@ -40,6 +47,18 @@ type PDFSubscriptionPayload {
 type PICSubscriptionPayload {
   mutation: MutationType!
   data: Picture!
+}
+
+type TODOSubscriptionPayload {
+  mutation: MutationType!
+  data: Todo!
+}
+
+
+type Chat {
+  id: Int!
+  from: String!
+  message: String!
 }
 
 type File {
@@ -66,6 +85,24 @@ type User {
   name: String!
   email: String!
 }
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  pwd: String!
+}
+
+type Todo {
+  id: ID!
+  text: String!
+  time: String!
+}
+
+input CreateTodoInput {
+  text: String!
+  time: String!
+}
+
 
 input CreateUserInput {
   name: String!

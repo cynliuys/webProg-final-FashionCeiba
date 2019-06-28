@@ -3,16 +3,21 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { default as InputFile } from '../../components/Inputfile/inputfile';
 import { default as FileList } from '../../components/Filelist/filelist';
 import { default as Sketch } from '../Sketch/Sketch';
+import { default as Chatroom } from '../Chatroom/Chatroom';
 import { Query, Mutation } from 'react-apollo'
 import { Redirect } from 'react-router-dom';
-import MaterialIcon  from 'material-icons-react'
 import {
   PDFS_QUERY,
   SINGLE_UPLOAD_PDF_MUTATION,
   LOGIN_QUERY,
-  SIGNOUT_USER_MUTATION,
   PDF_SUBSCRIPTION
-} from '../../graphql'
+} from '../../graphql';
+import IconButton from '@material-ui/core/IconButton';
+
+import ColorLens from '@material-ui/icons/ColorLensOutlined';
+import Chat from '@material-ui/icons/ChatOutlined';
+import Delete from '@material-ui/icons/DeleteOutlined';
+
 
 import './Main.css';
 
@@ -32,10 +37,30 @@ class Main extends React.Component {
       skechH: null,
       skechW: null,
       skechWH: null,
+      left: false,
+
+      toolbox: false,
+      clean: false,
     }
     this.clearSketch = false;
     this.login_user = null;
   }
+
+  toggleDrawer = (open) => event => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        return;
+    }
+    this.setState({ left: open });
+    console.log(this.state.left)
+  };
+
+  changeDrawer = (type, open) => event => {
+    console.log(type, open);
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    this.setState({ toolbox: open });
+};
    
   keyFunction = e => {
     if(e.keyCode === 37) {
@@ -126,15 +151,14 @@ class Main extends React.Component {
     });
   }
 
-  signout = () => {
-    this.signoutUser()
-    const { history } = this.props;
-    history.push('/login');
-  }
 
   removeDisplay = () => {
     this.setState({ currentfile: null});
     this.setState({ pageNumber: 1});
+  }
+
+  clean = () =>{
+    this.setState({clean: true})
   }
   
 
@@ -149,117 +173,134 @@ class Main extends React.Component {
   render() {
     //let { files} = this.state;
     return (
-        <div className="center">
-          <div className="Sidebar">
-          <Query query={LOGIN_QUERY}>
-            {({ loading, error, data}) => {
-              if (loading) return <p>Loading...</p>
-              if (error) return <p>Error :(((</p>
-              this.login_user = data.isLogin
-              if (!this.login_user)
-                return <Redirect to="/login" />;
-              else{
-                return (
-                  <div className="head">
-                    <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
-                      { singleUploadPDF => {
-                        this.singleUploadPDF = singleUploadPDF
-                        return (
-                          <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={this.login_user}>
-                            Select PDF
-                          </InputFile>)
-                      }}
-                    </Mutation>
-                    <Mutation mutation={SIGNOUT_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY }]}>
-                      {signoutUser => {
-                        this.signoutUser = signoutUser;
-                        return (
-                          <div className="signout" onClick={this.signout}> 
-                            EXIT<MaterialIcon icon="exit_to_app"/> 
-                          </div>
-                        );
-                        
-                      }}
-                    </Mutation> 
-                  </div>)
-              }
-            }}
-          </Query>
+        <div className="all">
+          <div className="center">
+            <div className="Sidebar">
+            <Query query={LOGIN_QUERY}>
+              {({ loading, error, data}) => {
+                if (loading) return <p>Loading...</p>
+                if (error) return <p>Error :(((</p>
+                this.login_user = data.isLogin
+                if (!this.login_user)
+                  return <Redirect to="/login" />;
+                else{
+                  return (
+                    <div className="head">
+                      <Mutation mutation={SINGLE_UPLOAD_PDF_MUTATION}>
+                        { singleUploadPDF => {
+                          this.singleUploadPDF = singleUploadPDF
+                          return (
+                            <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={this.login_user}>
+                              Select a PDF
+                            </InputFile>)
+                        }}
+                      </Mutation>
 
+                    </div>)
+                }
+              }}
+            </Query>
 
-          <Query query={PDFS_QUERY}>
-            {({loading, error, data, subscribeToMore}) => {
-              if (loading) return <p>Loading...</p>
-              if (error) return <p>Error...</p>
-              if (!unsubscribe)
-                unsubscribe = subscribeToMore({
-                  document: PDF_SUBSCRIPTION,
-                  updateQuery: (prev, { subscriptionData }) => {
-                    if (!subscriptionData.data) return prev
-                    if (subscriptionData.data.PDF.mutation === 'CREATED'){
-                      const newFile = subscriptionData.data.PDF.data
-                      return {
-                        ...prev,
-                        getPDFs: [...prev.getPDFs,newFile]
+            <Query query={PDFS_QUERY}>
+              {({loading, error, data, subscribeToMore}) => {
+                if (loading) return <p>Loading...</p>
+                if (error) return <p>Error...</p>
+                if (!unsubscribe)
+                  unsubscribe = subscribeToMore({
+                    document: PDF_SUBSCRIPTION,
+                    updateQuery: (prev, { subscriptionData }) => {
+                      if (!subscriptionData.data) return prev
+                      if (subscriptionData.data.PDF.mutation === 'CREATED'){
+                        const newFile = subscriptionData.data.PDF.data
+                        return {
+                          ...prev,
+                          getPDFs: [...prev.getPDFs,newFile]
+                        }
+                      }
+                      else if (subscriptionData.data.PDF.mutation === 'DELETED'){
+                        const deleteFile = subscriptionData.data.PDF.data
+                        const Files = prev.getPDFs.filter(pdf => pdf.id!==deleteFile.id)
+                        if (this.state.currentfile)
+                          if (this.state.currentfile.id === deleteFile.id)
+                            this.removeDisplay()
+                        return {
+                          ...prev,
+                          getPDFs: Files
+                        }
                       }
                     }
-                    else if (subscriptionData.data.PDF.mutation === 'DELETED'){
-                      const deleteFile = subscriptionData.data.PDF.data
-                      const Files = prev.getPDFs.filter(pdf => pdf.id!==deleteFile.id)
-                      if (this.state.currentfile)
-                        if (this.state.currentfile.id === deleteFile.id)
-                          this.removeDisplay()
-                      return {
-                        ...prev,
-                        getPDFs: Files
-                      }
-                    }
-                  }
-                })   
-              let files = data.getPDFs
-              if (files[0]){
-                return (
-                <FileList 
-                  files={files} 
-                  loadDisplay={this.loadDisplay} 
-                  user={this.login_user}
-                  />)
-              }
-              else
-                return (null)
-            }}
-          </Query>
-          </div>
+                  })   
+                let files = data.getPDFs
+                if (files[0] && this.login_user){
+                  return (
+                  <FileList 
+                    files={files} 
+                    loadDisplay={this.loadDisplay} 
+                    user={this.login_user}
+                    />)
+                }
+                else
+                  return (null)
+              }}
+            </Query>
+            
+            </div>
 
-          <div className="Content">
-            {
-            this.state.currentfile?
-            null:
-            <h1 style={{ marginTop: '5%', color: "#efefef", }}>Your PDF file will be viewed here.</h1>
-            }
-            <div className="temp" id="pdfWrapper" ref={(ref) => this.pdfWrapper = ref}>
-              <Document
-                file={this.state.currentfile ? "data:application/pdf;base64," + this.state.currentfile.pdf:null}
-                onLoadSuccess={this.onDocumentLoadSuccess}
-                onLoadError={(error) => console.log(error.message)}
-                onSourceError={(error) => console.log(error.message)}
-                noData={null}
-                loading={null}
-              >
-                <Page onLoadSuccess={this.onLoadSuccess} pageNumber={this.state.pageNumber} height={this.state.height} />
-                <Sketch height={this.state.skechH} width={this.state.skechW} clear={this.clearSketch}
-                        fileName={this.state.fileName} page={this.state.pageNumber} user={this.login_user}/>
-              </Document>
-              {this.state.currentfile?<div className="Foot">
-                <button className="PageButton" onClick={this.goToPrevPage} onKeyPress={this.goToPrevPage}>{`<`}</button>
-                <h2 className="PageName">Page 
-                  {this.state.currentPages===0?null:this.state.pageNumber}
-                  {this.state.currentPages===0?null:`/`}
-                  {this.state.currentPages===0?null:this.state.currentPages}
-                </h2>
-                <button className="PageButton" onClick={this.goToNextPage} onKeyPress={this.goToNextPage}>{`>`}</button>
-              </div>:null}
-              {this.clearSketch = false}
+            <div className="Content" >
+              {
+              this.state.currentfile?
+              null:
+              <h1 style={{ marginTop: '5%', color: "#efefef", }}>Your PDF file will be viewed here.</h1>
+              }
+              <div className="temp" id="pdfWrapper" ref={(ref) => this.pdfWrapper = ref}>
+                <Document
+                  file={this.state.currentfile ? "data:application/pdf;base64," + this.state.currentfile.pdf:null}
+                  onLoadSuccess={this.onDocumentLoadSuccess}
+                  onLoadError={(error) => console.log(error.message)}
+                  onSourceError={(error) => console.log(error.message)}
+                  noData={null}
+                  loading={null}
+                >
+                  <Page onLoadSuccess={this.onLoadSuccess} pageNumber={this.state.pageNumber} height={this.state.height} />
+                  <Sketch height={this.state.skechH} width={this.state.skechW} clear={this.clearSketch}
+                          fileName={this.state.fileName} page={this.state.pageNumber} user={this.login_user}
+                          toolboxOpen={this.state.toolbox} changeDrawer={(name, open)=>this.changeDrawer(name, open)}
+                          clean={this.state.clean}
+                          />
+                </Document>
+                {this.state.currentfile?<div className="Foot">
+                  <button className="PageButton" onClick={this.goToPrevPage} onKeyPress={this.goToPrevPage}>{`<`}</button>
+                  <h2 className="PageName">Page 
+                    {this.state.currentPages===0?null:this.state.pageNumber}
+                    {this.state.currentPages===0?null:`/`}
+                    {this.state.currentPages===0?null:this.state.currentPages}
+                  </h2>
+                  <button className="PageButton" onClick={this.goToNextPage} onKeyPress={this.goToNextPage}>{`>`}</button>
+                </div>:null}
+
+                <div className='DrawerButtonContainer'>
+                  <IconButton>
+                    <Chatroom 
+                      author={this.login_user} 
+                      left={this.state.left} 
+                      toggleUp={this.toggleDrawer(true)}
+                      toggleDown={this.toggleDrawer(false)}/>
+                  </IconButton>
+                  <IconButton>
+                    <ColorLens className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
+                          onClick={this.changeDrawer('toolbox', true)}
+                    />
+                  </IconButton>
+                  <IconButton>
+                    <Delete className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
+                          onClick={()=>this.clean()}
+                    />
+                  </IconButton>
+                </div>
+                {this.clearSketch = false}
+                {this.state.clean = false}
+                {console.log("end : ",this.state.clean)}
+              </div>
             </div>
           </div>
         </div>

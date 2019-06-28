@@ -4,6 +4,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -15,10 +17,10 @@ import {
 
 const ColorButton = withStyles(theme => ({
     root: {
-      color: theme.palette.getContrastText(green[400]),
-      backgroundColor: green[400],
+      color: theme.palette.getContrastText(green[600]),
+      backgroundColor: green[600],
       '&:hover': {
-        backgroundColor: green[600],
+        backgroundColor: green[800],
       },
     },
 }))(Button);
@@ -75,6 +77,11 @@ class Register extends Component {
         }
       }
 
+    Login = () => {
+        const { history } = this.props;
+        history.push('/login');
+    };
+
     handleFormSubmit = e => {
         e.preventDefault()
 
@@ -115,7 +122,6 @@ class Register extends Component {
             <Container component="main" maxWidth="xs">
               <CssBaseline />
               <div className={classes.paper}>
-                <h1 style={{fontSize:'50px'}}>Modern Ceiba</h1>
                 <Avatar className={classes.avatar}>
                   <LockOutlinedIcon />
                 </Avatar>
@@ -214,6 +220,14 @@ class Register extends Component {
                         >
                             Sign Up
                         </ColorButton>
+                        <Grid container>
+                            <Grid item >
+                                <Link href="#" variant="body2" onClick={this.Login} 
+                                style={{color:'black',fontSize:'15px'}}>
+                                {"Already have an account? Log In"}
+                                </Link>
+                            </Grid>
+                        </Grid>
                         </form>
                     )}}
                     </Mutation>

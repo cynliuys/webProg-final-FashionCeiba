@@ -3,6 +3,8 @@ import User from './user';
 import Uploadpdf from './uploadpdf';
 import Teacher from './teacher';
 import StudentsList from './studentsList';
+import Todo from './todo';
+import Chat from './chat'
 
 mongoose.Promise = global.Promise;
 
@@ -17,5 +19,7 @@ export const models = {
     User,
     Uploadpdf,
     Teacher,
-    StudentsList
+    StudentsList,
+    Todo,
+    Chat
 }

@@ -1,5 +1,18 @@
 import { gql } from 'apollo-boost'
 
+export const SEND_MESSAGE_MUTATION = gql`
+  mutation SendMessageMutation($from: String!, $message: String!) {
+    sendMessage(
+      from: $from,
+      message: $message
+    ) {
+      id
+      from
+      message
+    }
+  }
+`
+
 export const SINGLE_UPLOAD_PDF_MUTATION = gql`
     mutation singleUploadPDF (
       $data: Upload!
@@ -116,6 +129,36 @@ export const STUDENT_PIC_MUTATION = gql`
         filename
         page
         student
+    }
+  } 
+`
+export const CREATE_TODO_MUTATION = gql`
+  mutation createTodo (
+      $text: String!
+      $time: String!
+  ){
+    createTodo(
+      data:{
+        text: $text
+        time: $time
+      })
+    {
+      id
+      text
+      time
+    }
+  } 
+`
+
+export const DELETE_TODO_MUTATION = gql`
+  mutation deleteTodo (
+      $id: ID!
+  ){
+    deleteTodo(id: $id)
+    {
+      id
+      text
+      time
     }
   } 
 `

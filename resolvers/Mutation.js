@@ -2,6 +2,9 @@ import uuidv4 from 'uuid/v4'
 import bcrypt from 'bcryptjs'
 import {newStudentSchema} from '../db/student.js';
 
+// Data for new message
+const Chat = require("../db/chat");
+
 const Mutation = {
     singleUploadPDF: async (parent, args, {db, models, GridFS, pubsub, utils:{uploadFile, getFile} }, info) => {
       const { stream, filename, mimetype, encoding } = await args.data
@@ -98,6 +101,41 @@ const Mutation = {
         return true
       }
       return false
+    },
+
+
+    createTodo: async (parent, args, { db, pubsub, models, req }, info) => {
+      const Todo = {
+        id: uuidv4(),
+        ...args.data
+      }
+      const newTodo = new models.Todo(Todo);
+      try {
+        await newTodo.save();
+      } catch (e) {
+        throw new Error('Cannot Save Todo!!!');
+      }
+      pubsub.publish('TODO', {
+        TODO: {
+          mutation: 'CREATED',
+          data: Todo
+        }
+      })
+      return Todo;
+    },
+
+    deleteTodo: async (parent, args, { db, pubsub, models, req }, info) => {
+      const Todos = await models.Todo.find({});
+      const todoIndex = Todos.findIndex(Todo => Todo.id === args.id);
+      await models.Todo.findByIdAndRemove({ _id: Todos[todoIndex]._id })
+      const [Todo] = Todos.splice(todoIndex, 1)
+      pubsub.publish('TODO', {
+        TODO: {
+          mutation: 'DELETED',
+          data: Todo
+        }
+      })
+      return Todo
     },
 
     teacherPic: async (parent, args, {db, models, pubsub, req}, info) => {
@@ -212,6 +250,26 @@ const Mutation = {
         })
       }
       return data
+    },
+
+    sendMessage: async (parent, {from, message}, { db, pubsub, models}, info) => {
+      let data = new Chat();
+      data.chat.from = from
+      data.chat.message = message
+      await data.save(err => {
+        if (err) console.log('error');
+        return console.log('good');
+      });
+      
+      let chat = {id: 0, from , message}
+      await models.Chat.find((err, data) => {
+        if (err) { console.log('error');}
+        else{ 
+          chat.id = data.length + 1
+          pubsub.publish('CHAT_CHANNEL', { messageSent: chat })
+        }
+      });
+      return chat
     }
 }
 

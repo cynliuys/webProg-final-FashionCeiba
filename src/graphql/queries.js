@@ -1,5 +1,15 @@
 import { gql } from 'apollo-boost'
 
+export const CHATS_QUERY = gql`
+  query ChatsQuery {
+    chats {
+      id
+      from
+      message
+    }
+  }
+`
+
 export const LOGIN_QUERY = gql`
   query {
     isLogin {
@@ -14,6 +24,16 @@ export const USERS_QUERY = gql`
   query {
     getUSERs {
       name
+    }
+  }
+`
+
+export const TODOS_QUERY = gql`
+  query {
+    getTODOs {
+      id
+      text
+      time
     }
   }
 `

@@ -43,12 +43,12 @@ class PicQuery extends React.Component {
             data.getStudentPic.map((picture) =>{
                 if(picture.filename===this.props.fileName && parseInt(picture.page)===this.props.page){
                     if(this.props.sketch){
-                        // this.props.sketch.setBackgroundFromDataUrl(picture.pic, {
-                        //     stretched: true,
-                        // })
-                        this.props.sketch.addImg(picture.pic, {
-                            scale: 0.5,
-                        });
+                        this.props.sketch.setBackgroundFromDataUrl(picture.pic, {
+                            stretched: true,
+                        })
+                        // this.props.sketch.addImg(picture.pic, {
+                        //     scale: 0.5,
+                        // });
                     }
                 }
             });

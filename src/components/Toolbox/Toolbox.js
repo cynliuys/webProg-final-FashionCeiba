@@ -1,15 +1,9 @@
 import React from 'react';
 import { CompactPicker } from 'react-color';
 import 'flexboxgrid';
-import './Toolbox.css';
-import {
-    Card, CardHeader, CardText, MenuItem,
-    SelectField, Slider, Toggle,
-} from 'material-ui';
+import { MenuItem, SelectField, Slider, Toggle, } from 'material-ui';
 import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -38,18 +32,12 @@ class Toolbox extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            right: false,
             expanded: null,
         };
         this.unsubscribe = null;
     }
 
-    toggleDrawer = (open) => event => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-          return;
-        }
-        this.setState({ right: open });
-    };
+    
 
     handleExpand = panel => (event, isExpanded) => {  
         console.log(panel);
@@ -62,11 +50,8 @@ class Toolbox extends React.Component {
     render = () => {
         return (        
             <div className='col-xs-5 col-sm-5 col-md-3 col-lg-3 sidebar'>
-                <Button onClick={this.toggleDrawer(true)}>Open Right</Button>
-                <Drawer anchor="right" open={this.state.right} onClose={this.toggleDrawer(false)} width='10px'>
-                    <div role="presentation" style={{width: "300px"}}
-                        onKeyDown={this.toggleDrawer(false)}
-                    >
+                <Drawer anchor="right" open={this.props.toolboxOpen} onClose={this.props.changeDrawer('toolbox', false)} >
+                    <div role="presentation" style={{width: "300px"}}>
                         <List>
                             {/* Panel 1 */}
                             <ExpansionPanel expanded={this.state.expanded === 'panel1'} onChange={this.handleExpand('panel1')}>
@@ -97,7 +82,7 @@ class Toolbox extends React.Component {
                                 </ExpansionPanelSummary>
                                     <ExpansionPanelDetails>
                                         <Slider ref='slider' step={0.01}
-                                            defaultValue={0.5} style={{width: "250px"}}
+                                            defaultValue={(this.props.width-1)/15} style={{width: "250px"}}
                                             onChange={(e, v)=>this.props.handleWidth(e, v)}/>
                                     </ExpansionPanelDetails>
                             </ExpansionPanel>
