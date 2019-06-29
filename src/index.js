@@ -9,7 +9,6 @@ import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { createUploadLink } from "apollo-upload-client";
 import { getMainDefinition } from 'apollo-utilities'
-
 import './index.css'
 import App from './containers/App/App';
 import * as serviceWorker from './serviceWorker';

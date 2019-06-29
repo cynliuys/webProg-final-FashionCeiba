@@ -4,7 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import PostIcon from '@material-ui/icons/Message';
+import PostIcon from '@material-ui/icons/ViewList';
 import CourseIcon from '@material-ui/icons/ImportContacts'
 import CalendarIcon from '@material-ui/icons/CalendarToday'
 import PDFIcon from '@material-ui/icons/Description'
@@ -61,7 +61,7 @@ class MenuAppBar extends Component {
             <AppBar position="static" style={{backgroundColor:'green'}}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        Modern Ceiba
+                        Fashion Ceiba
                     </Typography>
                         <div style={{flexGrow: 1, justifyContent:'center',alignItems:"center", display: 'flex', flexWrap: 'wrap'}}>
                         <Link to={'/courseinfo'} style={{ color: '#FFF', textDecoration: 'none' }}>
@@ -73,13 +73,14 @@ class MenuAppBar extends Component {
                         </MenuItem>
                         </Link>   
                         
-
+                        <Link to={'/teacherinfo'} style={{ color: '#FFF', textDecoration: 'none' }}>
                         <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <PeopleIcon />
                             </IconButton>
                             <p style={{fontWeight: '600'}}>Teacher Info.</p>
                         </MenuItem>
+                        </Link>
                         
                         <Link to={'/main'} style={{ color: '#FFF', textDecoration: 'none' }}>
                         <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
@@ -154,14 +155,14 @@ class MenuAppBar extends Component {
                                         open={Boolean(this.state.anchorEl)}
                                         onClose={this.handleClose}
                                     >
-                                        <h3 style={{textAlign:'center', padding:'10px'}}>{this.login_user.name}</h3>
-                                        <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                                        <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                                        <h5 style={{textAlign:'center', padding:'5px'}}>{this.login_user.name}</h5>
+                                        {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                                        <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
                                         <Mutation mutation={SIGNOUT_USER_MUTATION} refetchQueries={[{ query: LOGIN_QUERY }]}>
                                             {signoutUser => {
                                             this.signoutUser = signoutUser;
                                             return (
-                                            <MenuItem onClick={this.signout}>Log out</MenuItem>
+                                            <MenuItem onClick={this.signout}>Log Out</MenuItem>
                                             );}}
                                         </Mutation> 
                                         

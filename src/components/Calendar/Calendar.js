@@ -5,7 +5,8 @@ import { AH, NiceDate } from '../../helpers';
 import { Query } from 'react-apollo'
 import {
   TODOS_QUERY,
-  TODO_SUBSCRIPTION
+  TODO_SUBSCRIPTION,
+  LOGIN_QUERY
 } from '../../graphql'
 import './calendar.css'
 import { Redirect } from 'react-router-dom';
@@ -73,7 +74,13 @@ class Calendar extends Component {
     const {openedMonth} = this.state;
     
     return (
-
+      <Query query={LOGIN_QUERY}>
+      {({ loading, error, data}) => {
+      if (loading) return <p>Loading...</p>
+      if (error) return <p>Error :(((</p>
+      this.login_user = data.isLogin
+      if (this.login_user)
+      return (
         <Query query={TODOS_QUERY}>
             {({loading, error, data, subscribeToMore}) => {
             if (loading) return <p>Loading...</p>
@@ -122,7 +129,10 @@ class Calendar extends Component {
               </div>
             )
             }}
-          </Query>
+          </Query>)
+        else 
+          return <Redirect to="/login" />;}}
+        </Query>
     );
   }
 }

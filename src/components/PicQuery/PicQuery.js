@@ -70,7 +70,7 @@ class PicQuery extends React.Component {
                             if(!this.props.isTeacher){
                                 if (subscriptionData.data.studentPIC.data.student!==this.props.user) return prev;
                             }
-                            console.log("updateQuery !");
+                            // console.log("updateQuery !");
                             const temp = (this.props.isTeacher)?"PIC":"studentPIC"
                             const newData = subscriptionData.data[temp]["data"];
                             if(this.props.isTeacher){

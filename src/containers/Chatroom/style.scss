@@ -1,0 +1,15 @@
+.float-room {
+    position: fixed;
+    top: 0px;
+    left: -350px;
+    width: 350px;
+    height: 100%;
+    background-color: #ffffff;
+    box-sizing: border-box;
+  
+    transition: left 0.2s;
+  
+    &--open {
+      left: 0;
+    }
+}
