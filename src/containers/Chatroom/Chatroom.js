@@ -15,6 +15,7 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
+import Badge from '@material-ui/core/Badge';
 import MailIcon from '@material-ui/icons/Mail';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -23,7 +24,8 @@ import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import SendIcon from '@material-ui/icons/Send';
 import Chat from '@material-ui/icons/ChatOutlined';
-
+import IconButton from '@material-ui/core/IconButton';
+import './style.scss';
 
 const inputStyles = makeStyles({
     root: {
@@ -60,12 +62,20 @@ class Chatroom extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fromContent: ''
+            fromContent: '',
+            classes: "float-room",
+            unRead: 0,
+            scroll2bottom: false
         }
         this.classes = inputStyles;
         this.buttonclasses = buttonStyles;
         this.unsubscribe = null
     };
+
+    gotoBottom = id => {
+        var element = document.getElementById(id);
+        element.scrollTop = element.scrollHeight - element.clientHeight;
+    }
 
     handleMessageSubmit = e => {
         e.preventDefault()
@@ -81,41 +91,70 @@ class Chatroom extends Component {
           }
         })
         this.setState({
-          fromContent: ''
+          fromContent: '',
+          scroll2bottom: true
         })
     }
 
     ShowDrawer = e => {
         this.props.toggleUp(e)
-        this.unsubscribe = null
+        this.setState({unRead: 0})
+        this.gotoBottom("chatroom_id")
     }
 
     render() {
+        if(this.props.left && this.state.classes === "float-room") {
+            this.setState({classes:"float-room float-room--open"})
+        } 
+        if(!this.props.left && this.state.classes === "float-room float-room--open") {
+            this.setState({classes:"float-room"})
+        } 
+        //console.log(this.state.classes)
+
         return (
             <div>
-                <Chat style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }} onClick={this.ShowDrawer}/>
-                <Drawer open={this.props.left} onClose={this.props.toggleDown} style={{"width": "350px"}}>
-                    <Container style={{"width": "350px"}}>
+                <IconButton>
+                    <Badge badgeContent={this.state.unRead} color="secondary">
+                        <Chat style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }} onClick={this.ShowDrawer}/>
+                    </Badge>
+                </IconButton>
+                <div className={this.state.classes} style={{borderRight:"0.3px solid gray"}}>
+                <Container style={{"width": "350px"}} >
                     <Row style={{ "margin": "auto", "width": "80%", "overflowWrap": "break-word"}}>
                         <Query query={CHATS_QUERY}>
                             {({ loading, error, data, subscribeToMore }) => {
                                 if (loading) return <p>Loading...</p>
                                 if (error) return <p>Error :(((</p>
+                                //console.log(data.chats)
                         
                                 const messages = data.chats.map(c => {
-                                    return (<div key={c.id} id="message" className="chat-message" style={{"margin":"3px"}} >
-                                        {c.from} : {c.message}
-                                    </div>)
+                                    if(c.from === this.props.author.name){
+                                        return (<div id="message" className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
+                                            <div style={{"fontSize":"small", "width":"100%", "textAlign":"right",paddingTop:"15px",paddingBottom:"5px"}}>{c.from}</div>
+                                            <div style={{"backgroundColor":"#badac1", "borderRadius":"10%"
+                                                        , "width":"60%", "textAlign":"left"
+                                                        , "padding":"3%", "float":"right"}}>{c.message}
+                                            </div>
+                                        </div>)}
+                                    else {
+                                        return (<div id="message" className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
+                                            <div style={{"fontSize":"small", "width":"100%", "textAlign":"left",paddingTop:"15px",paddingBottom:"5px"}}>{c.from}</div>
+                                            <div style={{"backgroundColor":"#f3f3f3", "borderRadius":"10%"
+                                                        , "width":"60%", "textAlign":"left"
+                                                        , "padding":"3%", "float":"left"}}>{c.message}
+                                            </div>
+                                        </div>)}
                                 })
                                 
-                                const chats = <div style={{"width": "100%", "height":"500px", "margin":'10px'}}>
+                                const chats = <div style={{"width": "100%", "height":"500px", "margin":'10px',"textAlign":"center"}}>
                                     <h2> Chatroom </h2><div
+                                        id = {"chatroom_id"}
                                         style={{"border":"1px solid", "overflowY": "scroll", 
                                         "overflowWrap": "break-word", "height":"90%"}}>
                                         {messages}
                                     </div></div>
 
-                                if (!this.unsubscribe)
+                                if (!this.unsubscribe) {
                                     this.unsubscribe = subscribeToMore({
                                     document: MESSAGE_SENT_SUBSCRIPTION,
                                     updateQuery: (prev, { subscriptionData }) => {
@@ -123,12 +162,14 @@ class Chatroom extends Component {
                                         console.log(subscriptionData.data.messageSent)
                                         console.log(prev.chats)
                                         const newMessage = subscriptionData.data.messageSent
-
+                                        if(newMessage.from !== this.props.author.name && !this.props.left) {
+                                            this.setState({unRead: this.state.unRead+1})
+                                        }
                                         return {
                                             ...prev,
                                             chats: [...prev.chats,newMessage]
                                         }
-                                    }})
+                                    }})}
                                 return <div style={{width:"100%"}}>{chats}</div>
                             }}
                         </Query>
@@ -137,7 +178,11 @@ class Chatroom extends Component {
                         <Mutation mutation={SEND_MESSAGE_MUTATION}>
                             {createMessage => {
                                 this.createMessage = createMessage
-
+                                if(this.state.scroll2bottom) {
+                                    this.gotoBottom("chatroom_id");
+                                    this.setState({scroll2bottom: false})
+                                }
+                                // console.log(this.state.scroll2bottom)
                                 return (
                                     <Form style={{width:"95%"} }onSubmit={this.handleMessageSubmit}>
                                     <Paper className={this.classes.root} style={{"margin":'10px'}}>
@@ -160,7 +205,7 @@ class Chatroom extends Component {
                         </Mutation>
                     </Row>
                     </Container>
-                </Drawer>
+                    </div>
             </div>
     )}
 }

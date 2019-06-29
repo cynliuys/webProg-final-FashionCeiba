@@ -15,7 +15,6 @@ import {
 import IconButton from '@material-ui/core/IconButton';
 
 import ColorLens from '@material-ui/icons/ColorLensOutlined';
-import Chat from '@material-ui/icons/ChatOutlined';
 import Delete from '@material-ui/icons/DeleteOutlined';
 
 
@@ -24,6 +23,7 @@ import './Main.css';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 let unsubscribe = null
+let login_user = null;
 
 class Main extends React.Component {
   constructor(props) {
@@ -43,7 +43,7 @@ class Main extends React.Component {
       clean: false,
     }
     this.clearSketch = false;
-    this.login_user = null;
+
   }
 
   toggleDrawer = (open) => event => {
@@ -51,15 +51,17 @@ class Main extends React.Component {
         return;
     }
     this.setState({ left: open });
-    console.log(this.state.left)
+    //console.log(this.state.left)
   };
 
   changeDrawer = (type, open) => event => {
-    console.log(type, open);
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
+    //console.log(type, open);
+    if(this.state.currentfile){
+      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        return;
+      }
+      this.setState({ toolbox: open });
     }
-    this.setState({ toolbox: open });
 };
    
   keyFunction = e => {
@@ -174,14 +176,14 @@ class Main extends React.Component {
     //let { files} = this.state;
     return (
         <div className="all">
-          <div className="center">
+          <div className="center" onClick={this.toggleDrawer(false)} onKeyDown={this.toggleDrawer(false)}>
             <div className="Sidebar">
             <Query query={LOGIN_QUERY}>
               {({ loading, error, data}) => {
                 if (loading) return <p>Loading...</p>
                 if (error) return <p>Error :(((</p>
-                this.login_user = data.isLogin
-                if (!this.login_user)
+                login_user = data.isLogin
+                if (!login_user)
                   return <Redirect to="/login" />;
                 else{
                   return (
@@ -190,7 +192,7 @@ class Main extends React.Component {
                         { singleUploadPDF => {
                           this.singleUploadPDF = singleUploadPDF
                           return (
-                            <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={this.login_user}>
+                            <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={login_user}>
                               Select a PDF
                             </InputFile>)
                         }}
@@ -231,12 +233,12 @@ class Main extends React.Component {
                     }
                   })   
                 let files = data.getPDFs
-                if (files[0] && this.login_user){
+                if (files[0] && login_user){
                   return (
                   <FileList 
                     files={files} 
                     loadDisplay={this.loadDisplay} 
-                    user={this.login_user}
+                    user={login_user}
                     />)
                 }
                 else
@@ -246,13 +248,13 @@ class Main extends React.Component {
             
             </div>
 
-            <div className="Content" >
+            <div className="Content">
               {
               this.state.currentfile?
               null:
               <h1 style={{ marginTop: '5%', color: "#efefef", }}>Your PDF file will be viewed here.</h1>
               }
-              <div className="temp" id="pdfWrapper" ref={(ref) => this.pdfWrapper = ref}>
+              <div className="temp" id="pdfWrapper" ref={(ref) => this.pdfWrapper = ref} >
                 <Document
                   file={this.state.currentfile ? "data:application/pdf;base64," + this.state.currentfile.pdf:null}
                   onLoadSuccess={this.onDocumentLoadSuccess}
@@ -263,7 +265,7 @@ class Main extends React.Component {
                 >
                   <Page onLoadSuccess={this.onLoadSuccess} pageNumber={this.state.pageNumber} height={this.state.height} />
                   <Sketch height={this.state.skechH} width={this.state.skechW} clear={this.clearSketch}
-                          fileName={this.state.fileName} page={this.state.pageNumber} user={this.login_user}
+                          fileName={this.state.fileName} page={this.state.pageNumber} user={login_user}
                           toolboxOpen={this.state.toolbox} changeDrawer={(name, open)=>this.changeDrawer(name, open)}
                           clean={this.state.clean}
                           />
@@ -278,30 +280,41 @@ class Main extends React.Component {
                   <button className="PageButton" onClick={this.goToNextPage} onKeyPress={this.goToNextPage}>{`>`}</button>
                 </div>:null}
 
-                <div className='DrawerButtonContainer'>
-                  <IconButton>
-                    <Chatroom 
-                      author={this.login_user} 
-                      left={this.state.left} 
-                      toggleUp={this.toggleDrawer(true)}
-                      toggleDown={this.toggleDrawer(false)}/>
-                  </IconButton>
-                  <IconButton>
-                    <ColorLens className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
-                          onClick={this.changeDrawer('toolbox', true)}
-                    />
-                  </IconButton>
-                  <IconButton>
-                    <Delete className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
-                          onClick={()=>this.clean()}
-                    />
-                  </IconButton>
-                </div>
+
                 {this.clearSketch = false}
                 {this.state.clean = false}
-                {console.log("end : ",this.state.clean)}
+                {/* {console.log("end : ",this.state.clean)} */}
               </div>
             </div>
+          </div>
+          <div className='DrawerButtonContainer'>
+            {  
+              <Query query={LOGIN_QUERY}>
+              {({ loading, error, data}) => {
+                if (loading) return <p>Loading...</p>
+                if (error) return <p>Error :(((</p>
+                if (data.isLogin)
+                return (
+                  <Chatroom 
+                  author={data.isLogin} 
+                  left={this.state.left} 
+                  toggleUp={this.toggleDrawer(true)}
+                  toggleDown={this.toggleDrawer(false)}/>
+                )
+                else 
+                  return null
+              }}
+              </Query>  
+            }
+            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}}>
+              <ColorLens className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
+                    onClick={this.changeDrawer('toolbox', true)} />
+            </IconButton>
+            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}}>
+              <Delete className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
+                    onClick={()=>this.clean()}
+              />
+            </IconButton>
           </div>
         </div>
       )

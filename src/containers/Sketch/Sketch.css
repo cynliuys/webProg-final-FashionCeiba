@@ -19,10 +19,11 @@
     height: 100%;
     background-color: #eeffd3;
     color: #000000;
+    margin: 0;
 }
 
 .sketchfield {
-    border: 0px solid #000000;
+    border: 1px solid #00000000;
     background-color: 'transparent';
     position: absolute;
     top: 50%; 

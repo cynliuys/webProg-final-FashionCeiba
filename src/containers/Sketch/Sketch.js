@@ -124,7 +124,7 @@ class Sketch extends React.Component {
     };
 
     render = () => {
-        {console.log("Render : ",this.props.clean)}
+        // {console.log("Render : ",this.props.clean)}
         if(this.props.clear){
             this.clear();
         }
