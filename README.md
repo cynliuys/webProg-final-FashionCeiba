@@ -25,23 +25,23 @@ $ From Deployed Link:
     * and enjoy
 ```
 
-## 使用方式
-* 登入介面，可以註冊或登入
-    * 老師 (name/email/pwd == ADMIN/ADMIN/ADMIN)
-    * 學生 (其他帳號)
-* Ceiba 基本功能
-    * 課程資訊
-    * 老師資訊
-    * 公佈欄/月曆
-* PDF 上課講義瀏覽
-    * 上傳大檔案 (需等一段時間)
-    * 編輯學生自己的筆記 (即時)
-    * 瀏覽老師上課的筆記 (即時)
-    * 刪除當頁筆記
-* 提出/回答問題 (聊天室)
-    * 未讀訊息量
-    * 學生提出問題
-    * 老師收到問題並回答
+## Functions
+* **Login Interface** : log in or sign up
+    * Teacher (name/email/pwd == ADMIN/ADMIN/ADMIN)
+    * Students (others)
+* **Ceiba Basic functions**
+    * Course information
+    * Teacher information
+    * Bulletin board/calender
+* **Course Handout PDF**
+    * Upload PDF file (need to wait a wile)
+    * Update student's private notes (instant)
+    * View teacher's public notes (instant)
+    * Delete notes in current page
+* **Ask/Answer Questions(chat room)**
+    * Show the number of unread messages
+    * Students can ask questions online
+    * Teacher can receive questions and answer immediately in class
 
 ## References
 ```
