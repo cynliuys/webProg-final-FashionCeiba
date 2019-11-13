@@ -1,5 +1,5 @@
 # [107-2] Web Programming Final - Fashion Ceiba
-This project was developed by [JacksonHsieh](https://github.com/hsiehjackson), [CynthiaYLiu](https://github.com/CynthiaYLiu), and [PierreSue](https://github.com/PierreSu). You can view this project on the browser through the following link [Fashion-Ceiba](https://fashion-ceiba.herokuapp.com/) and see the demonstration video by opening [Demo-video](https://youtu.be/NDc-VVZYLH0).
+This project was developed by [Jackson Hsieh](https://github.com/hsiehjackson), [Cynthia Liu](https://github.com/CynthiaYLiu), and [Pierre Sue](https://github.com/PierreSu). You can view this project on the browser through the following link [Fashion-Ceiba](https://fashion-ceiba.herokuapp.com/) and see the demonstration video by opening [Demo-video](https://youtu.be/NDc-VVZYLH0).
 
 ![image](https://github.com/CynthiaYLiu/Fashion-Ceiba/blob/master/img/68747470733a2f2f692e696d6775722e636f6d2f733341593361752e6a7067.jpeg)
 
@@ -65,15 +65,15 @@ $ From Deployed Link:
 
 ## Work Distribution
 
-* 解正平 [JacksonHsieh](https://github.com/hsiehjackson)
+* 解正平 [Jackson Hsieh](https://github.com/hsiehjackson)
     * Authetication/Basic funcion/PDF uploading  -- web interface/front end/back end/database
     * Deploy on herokuapp
 
-* 劉芸欣 [CynthiaYLiu](https://github.com/CynthiaYLiu)
+* 劉芸欣 [Cynthia Liu](https://github.com/CynthiaYLiu)
     * Sketchboard -- web interface/front end/back end/database
     * Demo video editing
 
-* 蘇峯廣 [PierreSue](https://github.com/PierreSu)
+* 蘇峯廣 [Pierre Sue](https://github.com/PierreSu)
     * Chatroom -- web interface/front end/back end/database
     * README
 
