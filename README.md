@@ -65,15 +65,15 @@ $ From Deployed Link:
 
 ## Work Distribution
 
-* [JacksonHsieh](https://github.com/hsiehjackson)
+* 解正平 [JacksonHsieh](https://github.com/hsiehjackson)
     * Authetication/Basic funcion/PDF uploading  -- web interface/front end/back end/database
     * Deploy on herokuapp
 
-* [CynthiaYLiu](https://github.com/CynthiaYLiu)
+* 劉芸欣 [CynthiaYLiu](https://github.com/CynthiaYLiu)
     * Sketchboard -- web interface/front end/back end/database
     * Demo video editing
 
-* [PierreSue](https://github.com/PierreSu)
+* 蘇峯廣 [PierreSue](https://github.com/PierreSu)
     * Chatroom -- web interface/front end/back end/database
     * README
 
