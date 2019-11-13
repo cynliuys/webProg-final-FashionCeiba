@@ -3,16 +3,11 @@ This project was developed by [JacksonHsieh](https://github.com/hsiehjackson), [
 
 ![image](https://github.com/CynthiaYLiu/Fashion-Ceiba/blob/master/img/68747470733a2f2f692e696d6775722e636f6d2f733341593361752e6a7067.jpeg)
 
-## About this project
 * Topic : (Group 03) Fashion Ceiba
 * Enable users to upload course handout, to update private and public notes immediately, and to ask questions online.
 * Team member：解正平(B04901020)、劉芸欣(B04901152)、蘇峯廣(B04901070)
-
-## Deployed Website
-[Website Link](https://fashion-ceiba.herokuapp.com/)
-
-## Demo Video
-[Video Link](https://youtu.be/NDc-VVZYLH0)
+* [Website Link](https://fashion-ceiba.herokuapp.com/) : https://fashion-ceiba.herokuapp.com/
+* [Video Link](https://youtu.be/NDc-VVZYLH0) : https://youtu.be/NDc-VVZYLH0
 
 ## How to run
 ```
