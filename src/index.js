@@ -14,21 +14,19 @@ import App from './containers/App/App';
 import * as serviceWorker from './serviceWorker';
 
 
-const httpLink = new HttpLink({
-    uri:  'http://localhost:4000/',
-    credentials: 'include'
-})
+const WS = window.location.origin.replace('http', 'ws')
 
-//const WS = window.location.origin.replace('http', 'ws')
 
 const wsLink = new WebSocketLink({
     uri: 'ws://localhost:4000/',
+    //uri: WS,
     options: { reconnect: true },
     credentials: 'include'
 })
 
 const upLink = new createUploadLink({
   uri: 'http://localhost:4000/',
+  //uri: '/',
   credentials: 'include'
 })
 

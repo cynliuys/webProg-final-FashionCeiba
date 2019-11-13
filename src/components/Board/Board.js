@@ -93,7 +93,7 @@ class Board extends Component {
                                     {deleteTodo => {
                                         this.deleteTodo = deleteTodo;
                                         return (
-                                        <ul className="todo-app__list" style={this.login_user.email === 'ADMIN'?{maxHeight:'20em'}:{maxHeight:'30em'}} >
+                                        <ul className="todo-app__list" style={this.login_user.email === 'ADMIN'?{maxHeight:'15em'}:{maxHeight:'20em'}} >
                                             {
                                                 todos.map((todo) =>                    
                                                 <TodoItem

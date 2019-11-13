@@ -5,6 +5,7 @@ import { default as FileList } from '../../components/Filelist/filelist';
 import { default as Sketch } from '../Sketch/Sketch';
 import { default as Chatroom } from '../Chatroom/Chatroom';
 import { Query, Mutation } from 'react-apollo'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { Redirect } from 'react-router-dom';
 import {
   PDFS_QUERY,
@@ -19,6 +20,7 @@ import Delete from '@material-ui/icons/DeleteOutlined';
 
 
 import './Main.css';
+import { inherits } from 'util';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -43,7 +45,7 @@ class Main extends React.Component {
       clean: false,
     }
     this.clearSketch = false;
-
+    this.loading = false
   }
 
   toggleDrawer = (open) => event => {
@@ -92,7 +94,7 @@ class Main extends React.Component {
     }
   }
 
-  uploadFileHandler = e => {
+  uploadFileHandler = async (e) => {
     if(e.target.files[0].type!=='application/pdf'){
       alert('must PDF file!!!');
       return
@@ -100,13 +102,14 @@ class Main extends React.Component {
     if (typeof(e.target.files[0])==='undefined')
       return
     const file = e.target.files[0];
+    this.loading = true;
     this.singleUploadPDF({
       variables: { data: file }
     })
   }
 
   goToPrevPage = () => {
-    this.clearSketch = true;
+    this.clearSketch = true
     document.activeElement.blur()
     if (this.state.currentPages === 0)
       return
@@ -173,7 +176,6 @@ class Main extends React.Component {
   }
 
   render() {
-    //let { files} = this.state;
     return (
         <div className="all">
           <div className="center" onClick={this.toggleDrawer(false)} onKeyDown={this.toggleDrawer(false)}>
@@ -192,9 +194,15 @@ class Main extends React.Component {
                         { singleUploadPDF => {
                           this.singleUploadPDF = singleUploadPDF
                           return (
+                            <div style={{margin:'auto'}}>
+                            {this.loading?
+                            <CircularProgress style={this.state.currentfile?{zIndex:1000,color:'black',position:'fixed',top:'50%',left:'58%'}:{color:'white',position:'fixed',top:'50%',left:'58%'}} size={40} thickness={4}/>
+                            :null
+                            }
                             <InputFile uploadFileHandler={this.uploadFileHandler.bind(this)} user={login_user}>
                               Select a PDF
-                            </InputFile>)
+                            </InputFile>
+                            </div>)
                         }}
                       </Mutation>
 
@@ -214,9 +222,28 @@ class Main extends React.Component {
                       if (!subscriptionData.data) return prev
                       if (subscriptionData.data.PDF.mutation === 'CREATED'){
                         const newFile = subscriptionData.data.PDF.data
-                        return {
-                          ...prev,
-                          getPDFs: [...prev.getPDFs,newFile]
+                        const index = prev.getPDFs.findIndex(pdf => pdf.id === newFile.id)
+                        this.loading = false;
+                        if (index!==-1){
+                          if (prev.getPDFs[index].pdf){
+                            return {
+                              ...prev,
+                              getPDFs: prev.getPDFs
+                            }
+                          }
+                          else{
+                            prev.getPDFs[index] = newFile
+                            return {
+                              ...prev,
+                              getPDFs: prev.getPDFs
+                            }
+                          }
+                        }
+                        else{
+                          return {
+                            ...prev,
+                            getPDFs: [...prev.getPDFs,newFile]
+                          }
                         }
                       }
                       else if (subscriptionData.data.PDF.mutation === 'DELETED'){
@@ -306,14 +333,11 @@ class Main extends React.Component {
               }}
               </Query>  
             }
-            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}}>
-              <ColorLens className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
-                    onClick={this.changeDrawer('toolbox', true)} />
+            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}} onClick={this.changeDrawer('toolbox', true)}>
+              <ColorLens className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}/>
             </IconButton>
-            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}}>
-              <Delete className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}
-                    onClick={()=>this.clean()}
-              />
+            <IconButton style={this.state.currentPages?{'cursor':'pointer'}:{'cursor':'not-allowed'}} onClick={()=>this.clean()}>
+              <Delete className="DrawerButton" style={{ fontSize: 40, color: 'rgba(198, 198, 198, 0.461)' }}/>
             </IconButton>
           </div>
         </div>

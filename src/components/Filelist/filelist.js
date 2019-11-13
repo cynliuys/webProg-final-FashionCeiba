@@ -30,7 +30,10 @@ class FileList extends React.Component {
                 (
                 <div key={index} className="FileList__item">
                   <div className="FileList__text"  onClick={() => this.props.loadDisplay(file)}>
-                    <h3>{file.filename}</h3>
+                    {
+                      file.pdf?<h3>{file.filename}</h3>:<h3>Loading...Please Wait</h3>
+                    }
+
                   </div>
                   {
                     this.props.user.email==='ADMIN'?

@@ -103,8 +103,8 @@ class Login extends Component {
             if (!error){
                 const { history } = this.props;
                 setTimeout(() => {
-                history.push('/main')
-                return <Redirect to="/main" />},1000);
+                history.push('/courseinfo')
+                return <Redirect to="/courseinfo" />},1000);
             }
         })
         this.setState({

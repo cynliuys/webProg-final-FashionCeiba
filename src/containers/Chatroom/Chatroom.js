@@ -74,6 +74,7 @@ class Chatroom extends Component {
 
     gotoBottom = id => {
         var element = document.getElementById(id);
+        console.log(element.scrollHeight - element.clientHeight)
         element.scrollTop = element.scrollHeight - element.clientHeight;
     }
 
@@ -91,8 +92,7 @@ class Chatroom extends Component {
           }
         })
         this.setState({
-          fromContent: '',
-          scroll2bottom: true
+          fromContent: ''
         })
     }
 
@@ -129,7 +129,7 @@ class Chatroom extends Component {
                         
                                 const messages = data.chats.map(c => {
                                     if(c.from === this.props.author.name){
-                                        return (<div id="message" className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
+                                        return (<div id="message" key={c._id} className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
                                             <div style={{"fontSize":"small", "width":"100%", "textAlign":"right",paddingTop:"15px",paddingBottom:"5px"}}>{c.from}</div>
                                             <div style={{"backgroundColor":"#badac1", "borderRadius":"10%"
                                                         , "width":"60%", "textAlign":"left"
@@ -137,7 +137,7 @@ class Chatroom extends Component {
                                             </div>
                                         </div>)}
                                     else {
-                                        return (<div id="message" className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
+                                        return (<div id="message" key={c._id} className="chat-message" style={{"margin":"3px", "width":"95%", "clear":"both"}} >
                                             <div style={{"fontSize":"small", "width":"100%", "textAlign":"left",paddingTop:"15px",paddingBottom:"5px"}}>{c.from}</div>
                                             <div style={{"backgroundColor":"#f3f3f3", "borderRadius":"10%"
                                                         , "width":"60%", "textAlign":"left"
@@ -146,10 +146,10 @@ class Chatroom extends Component {
                                         </div>)}
                                 })
                                 
-                                const chats = <div style={{"width": "100%", "height":"500px", "margin":'10px',"textAlign":"center"}}>
+                                const chats = <div style={{"width": "100%", "height":"400px", "margin":'10px',"textAlign":"center"}}>
                                     <h2> Chatroom </h2><div
                                         id = {"chatroom_id"}
-                                        style={{"border":"1px solid", "overflowY": "scroll", 
+                                        style={{"border":"2px solid #f3f3f3", "overflowY": "scroll", 
                                         "overflowWrap": "break-word", "height":"90%"}}>
                                         {messages}
                                     </div></div>
@@ -165,6 +165,9 @@ class Chatroom extends Component {
                                         if(newMessage.from !== this.props.author.name && !this.props.left) {
                                             this.setState({unRead: this.state.unRead+1})
                                         }
+                                        this.setState({
+                                            scroll2bottom: true
+                                          })
                                         return {
                                             ...prev,
                                             chats: [...prev.chats,newMessage]
@@ -179,10 +182,11 @@ class Chatroom extends Component {
                             {createMessage => {
                                 this.createMessage = createMessage
                                 if(this.state.scroll2bottom) {
-                                    this.gotoBottom("chatroom_id");
+                                    setTimeout(() => {
+                                        this.gotoBottom("chatroom_id");}, 100)
                                     this.setState({scroll2bottom: false})
                                 }
-                                // console.log(this.state.scroll2bottom)
+                                console.log(this.state.scroll2bottom)
                                 return (
                                     <Form style={{width:"95%"} }onSubmit={this.handleMessageSubmit}>
                                     <Paper className={this.classes.root} style={{"margin":'10px'}}>

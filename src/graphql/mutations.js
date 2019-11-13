@@ -6,7 +6,7 @@ export const SEND_MESSAGE_MUTATION = gql`
       from: $from,
       message: $message
     ) {
-      id
+      _id
       from
       message
     }

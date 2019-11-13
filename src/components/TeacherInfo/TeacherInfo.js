@@ -23,11 +23,11 @@ export default function MediaCard() {
           <Typography gutterBottom variant="h5" component="h2">
             Jackson Hsieh
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <SchoolIcon style={{marginRight:'3%'}} />
                 National Taiwan University
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <EmailIcon  style={{marginRight:'3%'}}/>
                 b04901020@ntu.edu.tw
           </Typography>
@@ -45,11 +45,11 @@ export default function MediaCard() {
           <Typography gutterBottom variant="h5" component="h2">
             Cynthia Liu 
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <SchoolIcon style={{marginRight:'3%'}} />
                 National Taiwan University
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <EmailIcon  style={{marginRight:'3%'}}/>
                 b04901152@ntu.edu.tw
           </Typography>
@@ -66,11 +66,11 @@ export default function MediaCard() {
           <Typography gutterBottom variant="h5" component="h2">
             Pierre Su
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <SchoolIcon style={{marginRight:'3%'}} />
                 National Taiwan University
           </Typography>
-          <Typography variant="h6" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p">
                 <EmailIcon  style={{marginRight:'3%'}}/>
                 b04901070@ntu.edu.tw
           </Typography>

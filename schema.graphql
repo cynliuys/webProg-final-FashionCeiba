@@ -56,7 +56,7 @@ type TODOSubscriptionPayload {
 
 
 type Chat {
-  id: Int!
+  _id: ID!
   from: String!
   message: String!
 }

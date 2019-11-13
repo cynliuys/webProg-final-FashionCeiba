@@ -28,7 +28,7 @@ const useStyles = theme => ({
     marginRight: theme.spacing(2),
   },
   title: {
-    fontWeight: '600',
+    fontWeight: '400',
     marginRight: '2%',
     marginLeft: '2%'
   },
@@ -57,55 +57,55 @@ class MenuAppBar extends Component {
     render () {
         const { classes } = this.props;
         return (
-            <div className={classes.root}>
+            <div style={{width:'100%'}}>
             <AppBar position="static" style={{backgroundColor:'green'}}>
-                <Toolbar>
+                <Toolbar style={{width:'100%', padding:'0'}}>
                     <Typography variant="h6" className={classes.title}>
                         Fashion Ceiba
                     </Typography>
                         <div style={{flexGrow: 1, justifyContent:'center',alignItems:"center", display: 'flex', flexWrap: 'wrap'}}>
                         <Link to={'/courseinfo'} style={{ color: '#FFF', textDecoration: 'none' }}>
-                        <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
+                        <MenuItem style={{width:'200px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <CourseIcon />
                             </IconButton>
-                            <p style={{fontWeight: '600'}}>Course Info.</p>
+                            <p style={{fontWeight: '400'}}>Course Info.</p>
                         </MenuItem>
                         </Link>   
                         
                         <Link to={'/teacherinfo'} style={{ color: '#FFF', textDecoration: 'none' }}>
-                        <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
+                        <MenuItem style={{width:'200px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <PeopleIcon />
                             </IconButton>
-                            <p style={{fontWeight: '600'}}>Teacher Info.</p>
+                            <p style={{fontWeight: '400'}}>Teacher Info.</p>
                         </MenuItem>
                         </Link>
                         
                         <Link to={'/main'} style={{ color: '#FFF', textDecoration: 'none' }}>
-                        <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
+                        <MenuItem style={{width:'200px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <PDFIcon />
                             </IconButton>
-                            <p style={{fontWeight: '600'}}>Lecture</p>
+                            <p style={{fontWeight: '400'}}>Lecture</p>
                         </MenuItem>
                         </Link>
                         
                         <Link to={'/board'} style={{ color: '#FFF', textDecoration: 'none' }}>
-                        <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
+                        <MenuItem style={{width:'200px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <PostIcon />
                             </IconButton>
-                            <p style={{fontWeight: '600'}}>Bulletin Board</p>
+                            <p style={{fontWeight: '400'}}>Bulletin Board</p>
                         </MenuItem>
                         </Link>
                         
                         <Link to={'/calendar'} style={{ color: '#FFF', textDecoration: 'none' }}>
-                        <MenuItem style={{width:'250px',justifyContent:'center',alignItems:"center"}}>
+                        <MenuItem style={{width:'200px',justifyContent:'center',alignItems:"center"}}>
                             <IconButton aria-label="Show mails" color="inherit" >
                                 <CalendarIcon />
                             </IconButton>
-                            <p style={{fontWeight: '600'}}>Calendar</p>
+                            <p style={{fontWeight: '400'}}>Calendar</p>
                         </MenuItem>
                         </Link>
 
@@ -117,20 +117,19 @@ class MenuAppBar extends Component {
                             this.login_user = data.isLogin
                             if (!this.login_user)
                                 return (
-                                    <div>
+                                    <div style={{visibility: 'hidden', width:'5%'}}>
                                     <IconButton
                                     aria-label="Account of current user"
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
                                     color="inherit"
-                                    style = {{visibility: 'hidden'}}
                                     >
                                         <AccountCircle />
                                     </IconButton>
                                     <Redirect to='/login' />
                                     </div>)
                             else {
-                                return (<div>
+                                return (<div style={{width:'5%'}}>
                                     <IconButton
                                         aria-label="Account of current user"
                                         aria-controls="menu-appbar"
@@ -165,7 +164,6 @@ class MenuAppBar extends Component {
                                             <MenuItem onClick={this.signout}>Log Out</MenuItem>
                                             );}}
                                         </Mutation> 
-                                        
                                     </Menu>
                                     </div>)
                             }

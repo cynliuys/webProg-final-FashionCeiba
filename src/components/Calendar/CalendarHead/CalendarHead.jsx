@@ -13,7 +13,7 @@ class CalendarHead extends Component {
         <CalendarHeadButton name="prev" {...{ onMonthChange }} />
 
         <span className="calendar__head__title">
-          <h5>{label}</h5>
+          <h5 style={{margin:'0'}}>{label}</h5>
         </span>
 
         <CalendarHeadButton name="next" {...{ onMonthChange }} />

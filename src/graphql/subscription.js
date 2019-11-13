@@ -4,7 +4,7 @@ import { gql } from 'apollo-boost'
 export const MESSAGE_SENT_SUBSCRIPTION = gql`
   subscription MessageSentSubscription {
     messageSent {
-      id
+      _id
       from
       message
     }

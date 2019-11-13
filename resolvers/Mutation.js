@@ -18,7 +18,19 @@ const Mutation = {
       } catch (e) {
         throw new Error('Cannot Save Upload!!!');
       }
-      
+      const output_file_temp = {
+        id:id, 
+        filename: filename,
+        mimetype: mimetype,
+        encoding: encoding,
+      }
+      pubsub.publish('PDF', {
+        PDF: {
+          mutation: 'CREATED',
+          data: output_file_temp
+        }
+      })
+
       const file_string = await getFile(GridFS,id);
       const output_file = {
         id:id, 
@@ -27,6 +39,7 @@ const Mutation = {
         encoding: encoding,
         pdf:file_string
       }
+      
       pubsub.publish('PDF', {
         PDF: {
           mutation: 'CREATED',
@@ -261,11 +274,10 @@ const Mutation = {
         return console.log('good');
       });
       
-      let chat = {id: 0, from , message}
+      let chat = {_id: uuidv4(), from , message}
       await models.Chat.find((err, data) => {
         if (err) { console.log('error');}
         else{ 
-          chat.id = data.length + 1
           pubsub.publish('CHAT_CHANNEL', { messageSent: chat })
         }
       });

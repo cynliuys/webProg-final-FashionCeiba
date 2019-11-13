@@ -1,6 +1,6 @@
 require('dotenv').config();
-//const express = require("express");
-//const path = require("path");
+const express = require("express");
+const path = require("path");
 import { GraphQLServer, PubSub } from 'graphql-yoga';
 import { startDB, models } from './db';
 import { newStudentSchema } from './db/student.js';
@@ -13,7 +13,6 @@ import ms from 'ms';
 
 
 const bodyParser = require('body-parser')
-const cors = require("cors");
 const mongoose = require("mongoose");
 const { GridFSBucket } = require('mongodb');
 
@@ -60,6 +59,11 @@ server.express.use(session({
 
 server.express.set('trust proxy', true)
 server.express.use(bodyParser({ limit: '16mb' }));
+
+// const root = path.join(__dirname, 'build')
+// server.express.use(express.static(root));
+// server.express.get("*", (req, res) =>
+//   {res.sendFile('index.html', { root });})
 
 const opts = {
     port: process.env.PORT || 4000,

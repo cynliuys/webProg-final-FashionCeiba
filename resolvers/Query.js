@@ -50,7 +50,7 @@ const Query = {
         var chats = []
         for (let i=0; i<Chats.length; i++) {
             let chat = Chats[i];
-            chats.push({id:i+1, from:chat.chat.from, message:chat.chat.message})
+            chats.push({_id:chat._id, from:chat.chat.from, message:chat.chat.message})
         }
         return chats
     }
