@@ -1,19 +1,19 @@
 # [107-2] Web Programming Final - Fashion Ceiba
 This project was developed by [JacksonHsieh](https://github.com/hsiehjackson), [CynthiaYLiu](https://github.com/CynthiaYLiu), and [PierreSue](https://github.com/PierreSu). You can view this project on the browser through the following link [Fashion-Ceiba](https://fashion-ceiba.herokuapp.com/) and see the demonstration video by opening [Demo-video](https://youtu.be/NDc-VVZYLH0).
 
+* Topic : (Group 03) Fashion Ceiba
+* Enable users to upload course handout, to update private and public notes immediately, and to ask questions online.
+* Team member：解正平(B04901020)、劉芸欣(B04901152)、蘇峯廣(B04901070)
+
+
+
 <img src="https://i.imgur.com/s3AY3au.jpg" alt="drawing"/> 
 
-## 題目名稱/一句話描述這個 project 在做什麼
-```
-$ 題目名稱 : (Group 03) Fashion Ceiba
-$ 組員：解正平(B04901020)、劉芸欣(B04901152)、蘇峯廣(B04901070)
-$ project 描述：一個課程教學平台，用於輔助教學系統，即時筆記、發問、更新上課講義。
-```
-## Deployed Website Link
-[Deployed-website](https://fashion-ceiba.herokuapp.com/)
+## Deployed Website
+[Website Link](https://fashion-ceiba.herokuapp.com/)
 
 ## Demo Video
-[Demo-video](https://youtu.be/NDc-VVZYLH0)
+[Video Link](https://youtu.be/NDc-VVZYLH0)
 
 ## How to run
 ```
@@ -30,7 +30,7 @@ $ From Deployed Link:
     * and enjoy
 ```
 
-## 安裝/使用/操作方式
+## 使用方式
 * 登入介面，可以註冊或登入
     * 老師 (name/email/pwd == ADMIN/ADMIN/ADMIN)
     * 學生 (其他帳號)
@@ -48,14 +48,14 @@ $ From Deployed Link:
     * 學生提出問題
     * 老師收到問題並回答
 
-## Reference
+## References
 ```
 1. https://github.com/daisy3607/react-sketch
 2. https://github.com/wojtekmaj/react-pdf
 3. https://github.com/lykmapipo/mongoose-gridfs
 ```
 
-## 使用之第三方套件、框架、原始碼
+## Dependencies
 ```
 * mongodb/mongoose/mongoose-gridfs
 * node.js
@@ -70,15 +70,15 @@ $ From Deployed Link:
 
 ## Work Distribution
 ```
-$ 解正平(B04901020)[JacksonHsieh](https://github.com/hsiehjackson)
+[JacksonHsieh](https://github.com/hsiehjackson)
     * Authetication/Basic funcion/PDF uploading  -- web interface/front end/back end/database
     * Deploy on herokuapp
 
-$ 劉芸欣(B04901152)[CynthiaYLiu](https://github.com/CynthiaYLiu)
+[CynthiaYLiu](https://github.com/CynthiaYLiu)
     * Sketchboard -- web interface/front end/back end/database
     * Demo video editing
 
-$ 蘇峯廣(B04901070)[PierreSue](https://github.com/PierreSu)
+[PierreSue](https://github.com/PierreSu)
     * Chatroom -- web interface/front end/back end/database
     * README
 ```
