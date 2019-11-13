@@ -73,7 +73,7 @@ $ From Deployed Link:
     * Sketchboard -- web interface/front end/back end/database
     * Demo video editing
 
-* 蘇峯廣 [Pierre Sue](https://github.com/PierreSu)
+* 蘇峯廣 [Pierre Sue](https://github.com/PierreSue)
     * Chatroom -- web interface/front end/back end/database
     * README
 
