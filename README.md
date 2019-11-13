@@ -6,8 +6,8 @@ This project was developed by [JacksonHsieh](https://github.com/hsiehjackson), [
 * Topic : (Group 03) Fashion Ceiba
 * Enable users to upload course handout, to update private and public notes immediately, and to ask questions online.
 * Team member：解正平(B04901020)、劉芸欣(B04901152)、蘇峯廣(B04901070)
-* [Website Link](https://fashion-ceiba.herokuapp.com/) : https://fashion-ceiba.herokuapp.com/
-* [Video Link](https://youtu.be/NDc-VVZYLH0) : https://youtu.be/NDc-VVZYLH0
+* **Deployed Website** : https://fashion-ceiba.herokuapp.com/
+* **Demo Video** : https://youtu.be/NDc-VVZYLH0
 
 ## How to run
 ```
@@ -19,6 +19,7 @@ $ From Github:
     * npm run client1 (./fashion-ceiba/) - port:3000
     * npm run client2 (./fashion-ceiba/) - port:3001
     * If you want to use teacher mode, just sign up with name/email/pwd = ADMIN
+    
 $ From Deployed Link:
     * open https://fashion-ceiba.herokuapp.com/login
     * and enjoy
