@@ -19,7 +19,7 @@ $ From Github:
     * npm run client1 (./fashion-ceiba/) - port:3000
     * npm run client2 (./fashion-ceiba/) - port:3001
     * If you want to use teacher mode, just sign up with name/email/pwd = ADMIN
-    
+
 $ From Deployed Link:
     * open https://fashion-ceiba.herokuapp.com/login
     * and enjoy
@@ -64,16 +64,16 @@ $ From Deployed Link:
 ```
 
 ## Work Distribution
-```
-[JacksonHsieh](https://github.com/hsiehjackson)
+
+* [JacksonHsieh](https://github.com/hsiehjackson)
     * Authetication/Basic funcion/PDF uploading  -- web interface/front end/back end/database
     * Deploy on herokuapp
 
-[CynthiaYLiu](https://github.com/CynthiaYLiu)
+* [CynthiaYLiu](https://github.com/CynthiaYLiu)
     * Sketchboard -- web interface/front end/back end/database
     * Demo video editing
 
-[PierreSue](https://github.com/PierreSu)
+* [PierreSue](https://github.com/PierreSu)
     * Chatroom -- web interface/front end/back end/database
     * README
-```
+
