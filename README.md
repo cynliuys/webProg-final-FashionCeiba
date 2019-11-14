@@ -1,4 +1,4 @@
-# [2018-2] Web Programming Final - Fashion Ceiba
+# [2018 spring] Web Programming Final - Fashion Ceiba
 This project was developed by [Jackson Hsieh](https://github.com/hsiehjackson), [Cynthia Liu](https://github.com/CynthiaYLiu), and [Pierre Sue](https://github.com/PierreSue). You can view this project on the browser through the following link [Fashion-Ceiba](https://fashion-ceiba.herokuapp.com/) and see the demonstration video by opening [Demo-video](https://youtu.be/NDc-VVZYLH0).
 
 ![image](https://github.com/CynthiaYLiu/Fashion-Ceiba/blob/master/img/68747470733a2f2f692e696d6775722e636f6d2f733341593361752e6a7067.jpeg)
