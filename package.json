@@ -20,7 +20,7 @@
     "apollo-boost": "0.4.0",
     "apollo-link-error": "1.1.10",
     "apollo-link-ws": "1.0.17",
-    "apollo-server-core": "2.6.1",
+    "apollo-server-core": "2.14.2",
     "apollo-upload-client": "10.0.1",
     "bcryptjs": "2.4.3",
     "bootstrap": "4.3.1",
